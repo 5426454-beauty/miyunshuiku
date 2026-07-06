@@ -8,4 +8,6 @@ dem_annotations.json
 __pycache__/
 *.pyc
 *.log
+.env
+map-agent/.env
 .DS_Store

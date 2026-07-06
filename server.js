@@ -15,7 +15,7 @@ app.use(cors())
 app.use(express.json({ limit: '10mb' }))
 
 // ── LLM API Key ────────────────────────────────────────
-const LLM_API_KEY = 'PLACEHOLDER_OPENROUTER_KEY'
+const LLM_API_KEY = process.env.LLM_API_KEY || ''
 const LLM_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const LLM_MODEL       = 'qwen/qwen3-max'          // 纯文本对话（OpenRouter）
 
