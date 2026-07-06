@@ -1,0 +1,25 @@
+{
+  "wdp": {
+    "url": "https://dtp-api.51aes.com",
+    "order": "5370da1dcb6547214dca7a5a1282a568"
+  },
+  "panels": {
+    "left": {
+      "style": { "width": "280px", "bgColor": "#060e1f", "opacity": 1 },
+      "modules": [
+        { "id": "left-mod-1", "title": "水库基本介绍", "chartType": "list", "dataSourceId": "" },
+        { "id": "left-mod-2", "title": "闸坝管理",     "chartType": "bar",  "dataSourceId": "" },
+        { "id": "left-mod-3", "title": "库容曲线",     "chartType": "line", "dataSourceId": "" }
+      ]
+    },
+    "right": {
+      "style": { "width": "280px", "bgColor": "#060e1f", "opacity": 1 },
+      "modules": [
+        { "id": "right-mod-1", "title": "供水监测", "chartType": "list", "dataSourceId": "" },
+        { "id": "right-mod-2", "title": "安全监测", "chartType": "bar",  "dataSourceId": "" },
+        { "id": "right-mod-3", "title": "安全事件", "chartType": "list", "dataSourceId": "" }
+      ]
+    }
+  },
+  "apis": []
+}

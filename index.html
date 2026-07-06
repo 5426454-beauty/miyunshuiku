@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>密云水库管理矩阵</title>
+  <script>
+    // 高德地图 JS API 2.0 安全密钥（必须在 SDK 加载前设置）
+    window._AMapSecurityConfig = { securityJsCode: '03da948a22f287b75010983c555df0d3' }
+  </script>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <!-- 顶部导航栏 -->
+  <header class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__time" id="js-time">11:24:35</span>
+      <span class="top-bar__date" id="js-date">2026-04-27</span>
+      <nav class="top-bar__nav">
+        <a class="nav-item nav-item--active" href="#">首页</a>
+        <a class="nav-item" href="#">四全</a>
+        <a class="nav-item" href="#">四制</a>
+        <a class="nav-item" href="#">四预</a>
+        <a class="nav-item" href="#">四管</a>
+      </nav>
+    </div>
+    <div class="top-bar__title">
+      <span class="title-deco"></span>
+      <span id="js-main-title">五一水库管理矩阵</span>
+      <span class="title-deco"></span>
+    </div>
+    <div class="top-bar__right">
+      <button id="js-btn-reset" class="reset-btn" disabled title="飞回全景俯视">复位</button>
+      <button id="js-btn-settings" class="reset-btn" title="设置">⚙ 设置</button>
+    </div>
+  </header>
+
+  <!-- 设置下拉面板（独立于 header，避免 overflow:hidden 裁剪） -->
+  <div id="js-settings-dropdown" class="settings-dropdown hidden">
+    <!-- 环境控制 -->
+    <div class="settings-section">
+      <div class="settings-section-title">🌍 环境</div>
+      <div class="settings-env-row">
+        <span class="settings-env-label">天气</span>
+        <select class="settings-env-select" id="js-weather-select">
+          <option value="Sunny">☀️ 晴天</option>
+          <option value="Cloudy">☁️ 阴天</option>
+          <option value="ModerateRain">雨天</option>
+          <option value="ModerateSnow">❄️ 雪天</option>
+        </select>
+      </div>
+      <div class="settings-env-row">
+        <span class="settings-env-label">时间</span>
+        <div class="settings-time-wrap">
+          <input type="range" class="settings-time-slider" id="js-time-slider"
+                 min="0" max="24" step="0.5" value="12" />
+          <span class="settings-time-display" id="js-time-display">12:00</span>
+        </div>
+      </div>
+      <div class="settings-presets">
+        <button class="settings-preset-btn" data-time="6">🌅 清晨</button>
+        <button class="settings-preset-btn" data-time="12">☀️ 正午</button>
+        <button class="settings-preset-btn" data-time="18">🌆 黄昏</button>
+        <button class="settings-preset-btn" data-time="22">🌙 夜晚</button>
+      </div>
+    </div>
+    <!-- UI 主题 -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎨 UI 主题</div>
+      <div class="settings-cards">
+        <button class="settings-card active" data-theme="A">
+          <span class="settings-swatch" style="background:linear-gradient(135deg,#000,#00FFFF)"></span>
+          <span class="settings-name">霓虹科技</span>
+        </button>
+        <button class="settings-card" data-theme="B">
+          <span class="settings-swatch" style="background:linear-gradient(135deg,#0a1f0f,#15803D)"></span>
+          <span class="settings-name">自然绿洲</span>
+        </button>
+        <button class="settings-card" data-theme="C">
+          <span class="settings-swatch" style="background:linear-gradient(135deg,#000,#FFFFFF)"></span>
+          <span class="settings-name">极简暗黑</span>
+        </button>
+      </div>
+      <div class="settings-env-row" style="margin-top:12px;margin-bottom:0;">
+        <span class="settings-env-label">面板透明度</span>
+        <div class="settings-time-wrap">
+          <input type="range" class="settings-time-slider" id="js-opacity-slider"
+                 min="10" max="100" value="75" />
+          <span class="settings-time-display" id="js-opacity-display">75%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主体三列布局 -->
+  <main class="main-layout">
+
+    <!-- 左侧面板 -->
+    <aside class="side-panel side-panel--left">
+      <!-- 水库基本介绍 -->
+      <section class="panel" id="panel-intro">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--reservoir"></span>水库基本介绍
+        </div>
+        <div class="panel__body">
+          <div class="intro-stats">
+            <div class="stat-item">
+              <span class="stat-label">库区面积</span>
+              <span class="stat-value">1000 <em>km²</em></span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">正常蓄水位</span>
+              <span class="stat-value">142.00 <em>m</em></span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">总库容</span>
+              <span class="stat-value">21.80 <em>亿m³</em></span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">装机容量</span>
+              <span class="stat-value">2192 <em>MW</em></span>
+            </div>
+          </div>
+          <p class="intro-desc">
+            水库位于湖北省境内，坝下溪流经古老石灰岩、下流有宽谷等分布，库区河段长约108km，流域面积16727km²，正常蓄水位142.00m，相应库容21.8亿m³，电站装机容量2192MW，属大（一）型水利枢纽工程。
+          </p>
+        </div>
+      </section>
+
+      <!-- 闸坝管理 -->
+      <section class="panel" id="panel-gate">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--gate"></span>闸坝管理
+        </div>
+        <div class="panel__body">
+          <div class="gauge-row">
+            <div class="gauge-wrap">
+              <div id="gauge-flow" class="gauge-chart"></div>
+              <span class="gauge-label">流量监测</span>
+            </div>
+            <div class="gauge-wrap">
+              <div id="gauge-open" class="gauge-chart"></div>
+              <span class="gauge-label">闸门开度</span>
+            </div>
+          </div>
+          <div class="gate-stats">
+            <div class="gate-stat-item">
+              <span>本月累计流量</span><span class="val-cyan">34.6 <em>m³/s</em></span>
+            </div>
+            <div class="gate-stat-item">
+              <span>本年累计流量</span><span class="val-cyan">289.3 <em>m³/s</em></span>
+            </div>
+            <div class="gate-stat-item">
+              <span>本月累计调度次数</span><span class="val-cyan">12 <em>次</em></span>
+            </div>
+            <div class="gate-stat-item">
+              <span>高峰期总调度量</span><span class="val-cyan">1240 <em>万m³</em></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 大坝控制（四管 Tab 专属） -->
+      <section class="panel" id="panel-dam" style="display:none">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--dam"></span>大坝控制
+        </div>
+        <div class="panel__body" id="js-panel-dam-body"></div>
+      </section>
+
+      <!-- 库容曲线 -->
+      <section class="panel" id="panel-curve">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--chart"></span>库容曲线
+        </div>
+        <div class="panel__body">
+          <div class="curve-meta">
+            <span>近期预测期间</span>
+            <span class="val-cyan">2026-04-27</span>
+            <span class="val-cyan ml-8">岛容量: 2200m³</span>
+          </div>
+          <div id="chart-curve" class="line-chart"></div>
+        </div>
+      </section>
+<!-- 降雨模拟（四预 Tab 专属，替代预警处置能力） -->
+      <section class="panel" id="panel-rainfall-sim" style="display:none">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--rain"></span>降雨模拟
+        </div>
+        <div class="panel__body">
+          <div class="rainfall-sim__info">
+            <div class="rainfall-sim__stat">
+              <span class="rainfall-sim__label">当前水位</span>
+              <span class="rainfall-sim__value" id="js-rainfall-waterlevel">155.0<small>m</small></span>
+            </div>
+            <div class="rainfall-sim__stat">
+              <span class="rainfall-sim__label">降雨量</span>
+              <span class="rainfall-sim__value" id="js-rainfall-mm">--<small>mm/24h</small></span>
+            </div>
+            <div class="rainfall-sim__stat">
+              <span class="rainfall-sim__label">水面状态</span>
+              <span class="rainfall-sim__status" id="js-rainfall-status">正常</span>
+            </div>
+          </div>
+          <div class="rainfall-sim__slider-row">
+            <span class="rainfall-sim__slider-label">24H 降雨量</span>
+            <input type="range" class="rainfall-sim__slider" id="js-rainfall-slider" min="0" max="300" value="0" step="10">
+            <span class="rainfall-sim__slider-val" id="js-rainfall-slider-val">0 mm</span>
+          </div>
+          <div class="rainfall-sim__presets">
+            <button class="rainfall-sim__preset" data-mm="50">小雨 50mm</button>
+            <button class="rainfall-sim__preset" data-mm="100">中雨 100mm</button>
+            <button class="rainfall-sim__preset" data-mm="200">大雨 200mm</button>
+          </div>
+          <div class="rainfall-sim__actions">
+            <button class="rainfall-sim__btn" id="js-rainfall-start">▶ 开始降雨</button>
+            <button class="rainfall-sim__btn rainfall-sim__btn--reset" id="js-rainfall-reset">↺ 停止复位</button>
+          </div>
+          <div class="rainfall-sim__progress" id="js-rainfall-progress" style="display:none">
+            <div class="rainfall-sim__progress-bar">
+              <div class="rainfall-sim__progress-fill" id="js-rainfall-progress-fill"></div>
+            </div>
+            <span class="rainfall-sim__progress-text" id="js-rainfall-progress-text">抬升中...</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- 中间 WDP 渲染区 -->
+    <div class="scene-container">
+      <div id="player" class="wdp-player"></div>
+      <div class="scene-status" id="js-scene-status">
+        <div class="loading-spinner"></div>
+        <span id="js-status-text">场景加载中...</span>
+      </div>
+      <!-- 巡检视频窗口（左上角覆盖层）-->
+      <div id="inspection-video-box" class="inspection-video-box" style="display:none">
+        <div class="inspection-video-title">🤖 巡检实时视频</div>
+        <video src="https://wdp5-api-debug.51aes.com/static/videoUI.mp4"
+               autoplay loop muted playsinline></video>
+      </div>
+    </div>
+
+    <!-- 右下角垂直工具栏（main-layout 层级，避免被面板遮挡）-->
+    <div class="floating-toolbar" id="js-floating-toolbar">
+      <button class="toolbar-btn" data-tool="heatmap"><span class="toolbar-icon panel__icon--heat"></span><span class="toolbar-tip">场景热力</span></button>
+      <button class="toolbar-btn" data-tool="migration"><span class="toolbar-icon panel__icon--migration"></span><span class="toolbar-tip">迁徙图</span></button>
+      <button class="toolbar-btn" data-tool="viewshed"><span class="toolbar-icon panel__icon--eye"></span><span class="toolbar-tip">可视域</span></button>
+    </div>
+
+    <!-- 右侧面板 -->
+    <aside class="side-panel side-panel--right">
+      <!-- 供水监测 -->
+      <section class="panel" id="panel-water">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--water"></span>供水监测
+        </div>
+        <div class="panel__body">
+          <div class="water-quality-grid" id="js-water-grid"></div>
+          <div class="water-quality-type">
+            水质类型：<span class="quality-badge">优</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 安全监测 -->
+      <section class="panel" id="panel-safety">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--safety"></span>安全监测
+        </div>
+        <div class="panel__body">
+          <div class="safety-score-wrap">
+            <div class="safety-icon">
+              <div id="gauge-safety" class="safety-gauge"></div>
+            </div>
+            <div class="safety-score-info">
+              <div class="score-main">
+                <span class="score-num">94.6</span>
+                <span class="score-total">/ 100</span>
+              </div>
+              <div class="score-label">安全综合分</div>
+            </div>
+          </div>
+          <div class="safety-metrics" id="js-safety-metrics"></div>
+          <div class="drone-patrol" id="js-drone-patrol">
+            <div class="drone-patrol__info">
+              <span class="drone-patrol__icon panel__icon panel__icon--drone" style="width:24px;height:24px"></span>
+              <div class="drone-patrol__text">
+                <span class="drone-patrol__title">无人机巡检</span>
+                <span class="drone-patrol__status" id="js-drone-status">待命</span>
+              </div>
+            </div>
+            <button class="drone-patrol__btn" id="js-drone-btn">启动巡检</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 安全事件 -->
+      <section class="panel" id="panel-invest">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--alert"></span>安全事件
+        </div>
+        <div class="panel__body">
+          <div class="invest-items" id="js-invest-items"></div>
+        </div>
+      </section>
+
+      <!-- 泄洪调度预演（四预 Tab 专属） -->
+      <section class="panel" id="panel-discharge" style="display:none">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--discharge"></span>泄洪调度预演
+        </div>
+        <div class="panel__body">
+          <div class="discharge-tabs">
+            <button class="discharge-tab discharge-tab--active" data-mode="forward">正向计算</button>
+            <button class="discharge-tab" data-mode="reverse">逆行推演</button>
+          </div>
+
+          <div class="discharge-row">
+            <label>上游水位</label>
+            <input type="number" id="js-discharge-up" value="142.00" step="0.01" min="0" />
+            <span>m</span>
+          </div>
+          <div class="discharge-row">
+            <label>下游水位</label>
+            <input type="number" id="js-discharge-down" value="130.00" step="0.01" min="0" />
+            <span>m</span>
+          </div>
+
+          <!-- 模式1：泄洪计算 — 各闸门设置 -->
+          <div id="js-discharge-gates">
+            <div class="discharge-subtitle">第三溢洪道 · 闸门开度设置</div>
+            <div class="discharge-gate-item" data-idx="0">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-gate-check" checked /> 01号闸门
+              </label>
+              <input type="number" class="discharge-gate-height" value="8" step="0.5" min="0" max="30" />
+              <span>m</span>
+            </div>
+            <div class="discharge-gate-item" data-idx="1">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-gate-check" checked /> 02号闸门
+              </label>
+              <input type="number" class="discharge-gate-height" value="8" step="0.5" min="0" max="30" />
+              <span>m</span>
+            </div>
+            <div class="discharge-gate-item" data-idx="2">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-gate-check" checked /> 03号闸门
+              </label>
+              <input type="number" class="discharge-gate-height" value="8" step="0.5" min="0" max="30" />
+              <span>m</span>
+            </div>
+            <div class="discharge-gate-item" data-idx="3">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-gate-check" checked /> 04号闸门
+              </label>
+              <input type="number" class="discharge-gate-height" value="8" step="0.5" min="0" max="30" />
+              <span>m</span>
+            </div>
+            <div class="discharge-gate-item" data-idx="4">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-gate-check" checked /> 05号闸门
+              </label>
+              <input type="number" class="discharge-gate-height" value="8" step="0.5" min="0" max="30" />
+              <span>m</span>
+            </div>
+            <div class="discharge-gate-item" data-idx="5">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-gate-check" checked /> 06号闸门
+              </label>
+              <input type="number" class="discharge-gate-height" value="8" step="0.5" min="0" max="30" />
+              <span>m</span>
+            </div>
+          </div>
+
+          <!-- 模式2：启闭规划 — 目标泄洪量 -->
+          <div id="js-discharge-target" style="display:none">
+            <div class="discharge-row">
+              <label>目标泄洪量</label>
+              <input type="number" id="js-discharge-target-q" value="500" step="1" min="0" />
+              <span>m³/s</span>
+            </div>
+            <div class="discharge-subtitle">参与闸门（第三溢洪道）</div>
+            <div class="discharge-gate-item">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-plan-check" checked /> 01号闸门
+              </label>
+            </div>
+            <div class="discharge-gate-item">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-plan-check" checked /> 02号闸门
+              </label>
+            </div>
+            <div class="discharge-gate-item">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-plan-check" checked /> 03号闸门
+              </label>
+            </div>
+            <div class="discharge-gate-item">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-plan-check" checked /> 04号闸门
+              </label>
+            </div>
+            <div class="discharge-gate-item">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-plan-check" checked /> 05号闸门
+              </label>
+            </div>
+            <div class="discharge-gate-item">
+              <label class="discharge-gate-label">
+                <input type="checkbox" class="discharge-plan-check" checked /> 06号闸门
+              </label>
+            </div>
+          </div>
+
+          <button class="discharge-btn-calc" id="js-discharge-btn-calc">计算泄洪量</button>
+          <button class="discharge-btn-sim" id="js-discharge-btn-sim" style="display:none">计算并模拟启闭</button>
+          <button class="discharge-btn-sim-selected" id="js-discharge-btn-sim-selected" style="display:none">模拟选中方案</button>
+          <button class="discharge-btn-stop" id="js-discharge-btn-stop" style="display:none">停止模拟</button>
+
+          <div class="discharge-results" id="js-discharge-results"></div>
+        </div>
+      </section>
+
+      <!-- 淹没预演（四预 Tab 专属） -->
+      <section class="panel" id="panel-flood" style="display:none">
+        <div class="panel__header">
+          <span class="panel__icon panel__icon--flood"></span>淹没预演
+        </div>
+        <div class="panel__body">
+          <div class="flood-row">
+            <label>淹没方案</label>
+            <select id="js-flood-scenario">
+              <option value="normal">常规泄洪</option>
+              <option value="20yr">20年一遇洪水</option>
+              <option value="50yr" selected>50年一遇洪水</option>
+              <option value="100yr">100年一遇洪水</option>
+            </select>
+          </div>
+
+          <div class="flood-params" id="js-flood-params">
+            <div class="flood-param-item">
+              <span>预计水位上升</span>
+              <span id="js-flood-rise-val">7.0 m</span>
+            </div>
+            <div class="flood-param-item">
+              <span>24H 降雨量</span>
+              <span id="js-flood-rain-val">220 mm</span>
+            </div>
+            <div class="flood-param-item">
+              <span>预计淹没面积</span>
+              <span id="js-flood-area-val">12.6 km²</span>
+            </div>
+          </div>
+
+          <div class="flood-btns">
+            <button class="flood-btn-start" id="js-flood-btn-start">▶ 开始预演</button>
+            <button class="flood-btn-stop" id="js-flood-btn-stop" style="display:none">■ 停止</button>
+            <button class="flood-btn-reset" id="js-flood-btn-reset" disabled>↺ 复位</button>
+          </div>
+
+          <div class="flood-progress-wrap">
+            <div class="flood-progress-bar">
+              <div class="flood-progress-fill" id="js-flood-progress-fill"></div>
+            </div>
+            <div class="flood-phase-labels">
+              <span>T+0h</span><span>T+6h</span><span>T+12h</span><span>T+18h</span><span>T+24h</span>
+            </div>
+          </div>
+
+          <div class="flood-phases" id="js-flood-phases">
+            <span class="flood-phase" data-phase="0">降雨积蓄</span>
+            <span class="flood-phase" data-phase="1">水位上涨</span>
+            <span class="flood-phase" data-phase="2">低洼漫溢</span>
+            <span class="flood-phase" data-phase="3">淹没峰值</span>
+          </div>
+
+          <div class="flood-status" id="js-flood-status">就绪</div>
+        </div>
+      </section>
+    </aside>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

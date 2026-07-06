@@ -1,0 +1,1092 @@
+[
+  {
+    "row": 1,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"http://10.67.8.110:9003/model/tl10qi4Qf/tileset.json\", // 3D Tiles server\n  \"geoLayerType\": \"3DTiles\"//图层类型\n})\nconst res = await App.Scene.Add(threedtiles)\nconsole.log(res);\n//tip::: 缓存全局对象,用于后续操作\nif(res.success) cache.set('threedtiles', threedtiles);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntities\",\n    \"args\": {\n        \"guid\": \"eacc0e10-bf91-11f0-aa71-551bf59a1646\",\n        \"createEntityParams\": [\n            {\n                \"EntityType\": \"Text3DEntity\",\n                \"BasicInfoAtom\": {\n                    \"entityName\": \"myName1\",\n                    \"customId\": \"my-text3d-id\",\n                    \"customData\": \"{\\\"data\\\":\\\"myCustomData\\\"}\"\n                },\n                \"TransformAtom\": {\n                    \"location\": [\n                        116.95,\n                        40.43,\n                        54\n                    ],\n                    \"rotator\": {\n                        \"pitch\": 90,\n                        \"yaw\": 0,\n                        \"roll\": 0\n                    },\n                    \"scale3d\": [\n                        1000,\n                        1000,\n                        1000\n                    ]\n                },\n                \"Text3DEntityAtom\": {\n                    \"text\": \"3D文字\",\n                    \"color\": \"1b60ff\",\n                    \"type\": \"plain\",\n                    \"outline\": 0.4,\n                    \"portrait\": false,\n                    \"space\": 0.1,\n                    \"faceToCamera\": false,\n                    \"shape\": \"auto\",\n                    \"radius\": 100,\n                    \"drawDebugBoundary\": false\n                }\n            }\n        ],\n        \"operations\": {\n            \"calculateCoordZ\": {\n                \"coordZRef\": \"surface\",\n                \"coordZOffset\": 50\n            }\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 2,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "点云数据加载"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"CreatePointCloudSim\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"data\": [], //data里是对应各监测点位的pos（cad中的偏移量），以及各监测点的values，values里面可以填单时序的数据，也可以是多时序的数组\n  \"pointSimName\": \"zoumazhuang\", // 唯一名字，用户可以自己定义\n  \"currentValueIndex\": 0, // 当前显示的时序帧index，需要注意：第一帧的index需从0开始\n  \"coordinate\": \"CAD\", // 坐标系Local/Gis/CAD，密云项目中填入\"CAD\"\n  \"dataValueRange\": [ 0, 0 ], //色卡的阈值范围，最小值~最大值\n  \"pointSize\": 1, //点云点大小控制\n  \"sourceCRS\": \"\", // GIS坐标转换，原始坐标系，需填入本项目中所使用的坐标系，，密云项目的话，就填入\"EPSG:4326\"\n  \"targetCRS\": \"\", // GIS坐标转换，投影坐标系，需填入本项目中所使用的坐标系转换规则，密云项目的话，就填入\"+proj=ortho +lon_0=116.83241904356427 +lat_0=40.48456289244539 +a=6371010 +units=m +no_defs\"\n  \"cadOrigin\": [ 0, 0, 0 ], // cad坐标原点所对应的GIS坐标\n  \"bLoopValue\": false, //是否循环播放\n  \"tickValueTime\": 1 // 循环播放切换时间间隔（s）\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：密云渗流API示例CreatePointCloudSim.json"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "const jsondata = {\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"CreatePointCloudSim\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"data\":[{\"pos\":[270.92999267578125,0,80],\"values\":[149.43670654296875]},{\"pos\":[285.77999877929688,7.5659999847412109,80],\"values\":[149.42160034179688]},{\"pos\":[300.6300048828125,15.133000373840332,80],\"values\":[149.37620544433594]},{\"pos\":[315.48001098632812,22.698999404907227,80],\"values\":[149.29989624023438]},{\"pos\":[330.33099365234375,30.266000747680664,80],\"values\":[149.1925048828125]},{\"pos\":[345.18099975585938,37.833000183105469,80],\"values\":[149.05349731445312]},{\"pos\":[360.031005859375,45.398998260498047,80],\"values\":[148.88250732421875]},{\"pos\":[255.94000244140625,29.773000717163086,80],\"values\":[149.4971923828125]},{\"pos\":[270.79000854492188,37.340000152587891,80],\"values\":[149.48249816894531]},{\"pos\":[285.6400146484375,44.905998229980469,80],\"values\":[149.43769836425781]},{\"pos\":[300.49099731445312,52.472999572753906,80],\"values\":[149.3623046875]},{\"pos\":[315.34100341796875,60.03900146484375,80],\"values\":[149.25559997558594]},{\"pos\":[330.19100952148438,67.606002807617188,80],\"values\":[149.11709594726562]},{\"pos\":[345.04098510742188,75.1719970703125,80],\"values\":[148.94610595703125]},{\"pos\":[240.94999694824219,59.547000885009766,80],\"values\":[149.67170715332031]},{\"pos\":[255.80000305175781,67.112998962402344,80],\"values\":[149.65800476074219]},{\"pos\":[270.64999389648438,74.680000305175781,80],\"values\":[149.61529541015625]},{\"pos\":[285.5,82.246002197265625,80],\"values\":[149.54269409179688]},{\"pos\":[300.35101318359375,89.813003540039062,80],\"values\":[149.43919372558594]},{\"pos\":[315.20098876953125,97.378997802734375,80],\"values\":[149.30320739746094]},{\"pos\":[330.05099487304688,104.94599914550781,80],\"values\":[149.13330078125]},{\"pos\":[225.96000671386719,89.319999694824219,80],\"values\":[149.91990661621094]},{\"pos\":[240.80999755859375,96.886001586914062,80],\"values\":[149.90570068359375]},{\"pos\":[255.66000366210938,104.4530029296875,80],\"val..."
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "const jsondata = {\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"CreatePointCloudSim\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"data\":[{\"pos\":[270.92999267578125,0,80],\"values\":[149.43670654296875]},{\"pos\":[285.77999877929688,7.5659999847412109,80],\"values\":[149.42160034179688]},{\"pos\":[300.6300048828125,15.133000373840332,80],\"values\":[149.37620544433594]},{\"pos\":[315.48001098632812,22.698999404907227,80],\"values\":[149.29989624023438]},{\"pos\":[330.33099365234375,30.266000747680664,80],\"values\":[149.1925048828125]},{\"pos\":[345.18099975585938,37.833000183105469,80],\"values\":[149.05349731445312]},{\"pos\":[360.031005859375,45.398998260498047,80],\"values\":[148.88250732421875]},{\"pos\":[255.94000244140625,29.773000717163086,80],\"values\":[149.4971923828125]},{\"pos\":[270.79000854492188,37.340000152587891,80],\"values\":[149.48249816894531]},{\"pos\":[285.6400146484375,44.905998229980469,80],\"values\":[149.43769836425781]},{\"pos\":[300.49099731445312,52.472999572753906,80],\"values\":[149.3623046875]},{\"pos\":[315.34100341796875,60.03900146484375,80],\"values\":[149.25559997558594]},{\"pos\":[330.19100952148438,67.606002807617188,80],\"values\":[149.11709594726562]},{\"pos\":[345.04098510742188,75.1719970703125,80],\"values\":[148.94610595703125]},{\"pos\":[240.94999694824219,59.547000885009766,80],\"values\":[149.67170715332031]},{\"pos\":[255.80000305175781,67.112998962402344,80],\"values\":[149.65800476074219]},{\"pos\":[270.64999389648438,74.680000305175781,80],\"values\":[149.61529541015625]},{\"pos\":[285.5,82.246002197265625,80],\"values\":[149.54269409179688]},{\"pos\":[300.35101318359375,89.813003540039062,80],\"values\":[149.43919372558594]},{\"pos\":[315.20098876953125,97.378997802734375,80],\"values\":[149.30320739746094]},{\"pos\":[330.05099487304688,104.94599914550781,80],\"values\":[149.13330078125]},{\"pos\":[225.96000671386719,89.319999694824219,80],\"values\":[149.91990661621094]},{\"pos\":[240.80999755859375,96.886001586914062,80],\"values\":[149.90570068359375]},{\"pos\":[255.66000366210938,104.4530029296875,80],\"val..."
+      }
+    ]
+  },
+  {
+    "row": 3,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "点云数据上一帧、后一帧时序的播放"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SwitchSimDataValue\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\", //在加载点云数据接口中自定义的名字\n  \"bPrevious\": false //false为显示当前帧上一帧的数据。True为显示当前帧下一帧的数据\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SwitchSimDataValue\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\",\n  \"bPrevious\": false\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 4,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "设置当前需要显示的时序index"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetCurrentValueIndex\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\", //在加载点云数据接口中自定义的名字\n  \"currentValueIndex\": 1 //需要显示的目标时序帧\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetCurrentValueIndex\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\",\n  \"currentValueIndex\": 1\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 5,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "点云数据多时序播放、暂停、倍速设定"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetLoopSimDataValue\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\", //在加载点云数据接口中自定义的名字\n  \"bLoopValue\": true, //false为暂停，true为恢复播放\n  \"tickValueTime\": 3 //播放倍速设定\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetLoopSimDataValue\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\",\n  \"bLoopValue\": true,\n  \"tickValueTime\": 3\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 6,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "设置阈值范围"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetDataValueRange\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\", //在加载点云数据接口中自定义的名字\n  \"dataValueRange\": [ 0, 0 ] //色卡的阈值范围，最小值~最大值\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetDataValueRange\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\",\n  \"dataValueRange\": [ -30, 30 ]\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 7,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "点云效果抬升（目标高度、抬升所需时间）"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetPointCloudOffset\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\", //在加载点云数据接口中自定义的名字\n  \"offset\": [ 0, 0, 0 ], //抬升的三轴位置偏移，单位：米\n  \"time\": 1.0\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetPointCloudOffset\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\",\n  \"offset\": [ 0, 0, 10 ],\n  \"time\": 1.0\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 8,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "点云效果显隐切换"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetPointCloudHidden\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\", //在加载点云数据接口中自定义的名字\n  \"bHidden\": false //false为隐藏，true为显示\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"SetPointCloudHidden\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\",\n  \"bHidden\": true\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 9,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "点云效果清除"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata = {\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"RemovePointCloudSim\",\n \"args\":\n {\n  \"guid\": \"\", //可以不用去填，空着即可\n  \"pointSimName\": \"zoumazhuang\" //在加载点云数据接口中自定义的名字\n }\n};\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "样例数据：\n{\n \"apiClassName\": \"PointCloudSimAPI\",\n \"apiFuncName\": \"RemovePointCloudSim\",\n \"args\":\n {\n  \"guid\": \"\",\n  \"pointSimName\": \"test\"\n }\n}"
+      }
+    ]
+  },
+  {
+    "row": 10,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "水面片显隐"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const { result } = await App.Scene.GetProject();\nconsole.log(result);\ncache.set('project', result?.Project?.[0])\n\n// setModelVisible\nApp.Scene.TilesNode.SetNodesVisibility({\n  nodeIds: ['10016'],\n  bVisible: true,\n  tiles: cache.get('project')\n})"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "const eids = [\"10016\"]; // 获取并输入场景中的一个或多个EID\nconst res = await App.Scene.GetByEids(eids);\nconst obj = res.result[0]\nobj.SetVisible(false); // false/true"
+      }
+    ]
+  },
+  {
+    "row": 11,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "大坝"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "// 走马坝热力图抬升和显隐\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Dam\",\n    \"args\": {\n        \"placename\": \"走马坝热力图\",\n        \"action\": \"liftandshow\",\n        \"moreparameters\": {\n            \"height\": \"200\",  // 提升高度（单位：米）\n            \"show\": \"true\"  //是否显示\n        }\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "// 坝体显隐\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Dam\",\n    \"args\": {\n        \"placename\": \"北白岩副坝\",   // 走马庄副坝、九松山副坝、北白岩副坝、南石骆驼副坝、潮河主坝、白河主坝、西石骆驼副坝、第一溢洪道、第二溢洪道、第三溢洪道\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"show\": \"false\"  //是否显示\n        }\n    }\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "// 大坝透明\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Dam\",\n    \"args\": {\n        \"placename\": \"北白岩副坝\",  // 走马庄副坝、九松山副坝、北白岩副坝、南石骆驼副坝、潮河主坝、白河主坝、西石骆驼副坝\n        \"action\": \"maketransparent\",\n        \"moreparameters\": {\n            \"appearance\": \"transparent\"  // normal（常规）/transparent（透明）\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 12,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "库区水面\n（基于倾斜摄影抬高20米）\n（库区可变水面 初始为155米水面轮廓；库区可变水面和库区155米水面轮廓的设置高度为？）"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "// 水面显隐（做其他操作时先调用此方法）\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"WaterSurface\",\n    \"args\": {\n        \"placename\": \"库区水面\",  //库区155米水面轮廓、库区156米水面轮廓、库区157米水面轮廓、库区157.5米水面轮廓、库区158.5米水面轮廓、库区160米水面轮廓、库区可变水面、库区水面\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"show\": \"false\"  // true（显示）/false（隐藏）\n        }\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "// 设置水面绝对高度，只设置水面\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"WaterSurface\",\n    \"args\": {\n        \"placename\": \"库区可变水面\",  // 库区水面（126-158.5）、库区可变水面（155-160）\n        \"action\": \"setheight\",\n        \"moreparameters\": {\n            \"height\": \"180\",  // 高度（单位：米） //可变水面默认高度155米（155-160）倾斜抬高多少对应值增加对少米\n            \"duration\": \"0\"  // 持续时间（秒）\n        }\n    }\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "// 水面轮廓颜色更改\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"WaterSurface\",\n    \"args\": {\n        \"placename\": \"库区160米水面轮廓\",  // 库区155米水面轮廓、库区156米水面轮廓、库区157米水面轮廓、库区157.5米水面轮廓、库区158.5米水面轮廓、库区160米水面轮廓\n        \"action\": \"setcolor\",\n        \"moreparameters\": {\n            \"color\": \"ff0000ff\"  // hex颜色值\n        }\n    }\n}"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "// 轮廓抬升、只抬升轮廓\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"WaterSurface\",\n    \"args\": {\n        \"placename\": \"\",  //库区155米水面轮廓、库区156米水面轮廓、库区157米水面轮廓、库区157.5米水面轮廓、库区158.5米水面轮廓、库区160米水面轮廓\n        \"action\": \"lift\",\n        \"moreparameters\": {\n            \"height\": \"20\",  // 高度（单位：米） 相对初始位置升降多少米\n            \"duration\": \"2\"  // 持续时间（秒）\n        }\n    }\n}"
+      },
+      {
+        "col": 7,
+        "header": "None",
+        "value": "// 淹没可变水面形状渐变\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"WaterSurface\",\n    \"args\": {\n        \"placename\": \"库区可变水面\",\n        \"action\": \"expand\",\n        \"moreparameters\": {\n            \"targetheight\": \"158.5\",  // 业务表达，（播放可变淹没水面位置155-160）\n            \"duration\": \"2\"  // 持续时间（秒）\n        }\n    }\n}"
+      },
+      {
+        "col": 8,
+        "header": "None",
+        "value": "// 淹没可变水面渐变区域颜色\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"WaterSurface\",\n    \"args\": {\n        \"placename\": \"库区可变水面\",\n        \"action\": \"SetTransitionZoneColor\",\n        \"moreparameters\": {\n            \"155.0-156.0\": \"ff0000ff\",\n            \"156.0-157.0\": \"00ff00ff\",\n            \"157.0-157.5\": \"0000ffff\",\n            \"157.5-158.5\": \"ffff00ff\",\n            \"158.5-160.0\": \"00ffffff\"        //全0恢复默认材质\n  }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 13,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "查看坝体截面"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"DamSection\",\n    \"args\": {\n        \"placename\": \"走马庄副坝断面\",\n        \"sectionName\": \"0+165\",  // 不传此参数控制整体显隐\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"show\": \"true\"\n        }\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"DamSection\",\n    \"args\": {\n        \"placename\": \"走马庄副坝\",  \n        \"show\": true\n    }\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "走马庄副坝断面：0+165，0+345\n九松山副坝断面：0+820\n北白岩副坝断面：0+040，0+060\n南石骆驼副坝断面：0+330\n潮河主坝断面：0+510，0+710\n白河主坝断面：0+250，0+433，0+640\n西石骆驼副坝断面：0+145\n第一溢洪道断面：0+000"
+      },
+      {
+        "col": 5,
+        "header": "None",
+        "value": "{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"DamSection\",\n    \"args\": {\n        \"placename\": \"潮河主坝断面\",\n        \"sectionName\": \"0+510\",  // 不传此参数控制整体显隐\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"show\": \"true\"\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 14,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "断面孤立"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "// 需要先调用Setvisibility动作\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"DamSection\",\n    \"args\": {\n        \"placename\": \"潮河主坝断面\",\n        \"sectionName\": \"0+510\",\n        \"action\": \"isolate\",\n        \"moreparameters\": {\n            \"strength\": 1\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 15,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "查询设备属性"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"QueryDeviceByID\",\n    \"args\": {\n        \"deviceids\": [\"Z-UP-15\",\"100268\"]  // 设备ID数组\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 16,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "设备"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "// 设备显隐\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Device\",\n    \"args\": {\n        \"placename\": \"走马庄副坝\",\n        \"IDs\":[\"00背水测护砌\",\"00反滤层\",\"00附属物\",\"00楼梯\",\"00面水侧护砌\",\"00壤土斜墙\",\"00排水沟\",\"沙砾料坝体\",\"00堤顶路及防漏墙\",\"00芯墙\",\"00走马庄隧洞\",\"00透明\",\"Z-GN-1-1\",\"Z-GN-1-2\",\"Z-GN-1-3\",\"Z-GN-1-4\",\"Z-GN-1-5\",\"Z-GN-1-6\",\"Z-GN-1-7\",\"Z-GN-1-8\",\"Z-GN-2-4\",\"Z-GN-2-5\",\"Z-GN-2-6\",\"Z-GN-2-7\",\"Z-GN-2-8\",\"Z-GN-3-3\",\"Z-GN-3-4\",\"Z-GN-3-5\",\"Z-GN-3-6\",\"Z-GN-3-7\",\"Z-GN-3-8\",\"Z-GN-L1\",\"Z-GN-R1\",\"Z-QZY-1-1\",\"Z-QZY-1-2\",\"Z-QZY-2-1\",\"Z-QZY-2-2\",\"Z-TB-L1\",\"Z-TB-L2\",\"Z-TB-L3\",\"Z-TB-R2\",\"Z-UP-20A\",\"Z-UP-20B\",\"Z-UP-28A\",\"Z-UP-28B\",\"Z-UP-1\",\"Z-UP-2\",\"Z-UP-3\",\"Z-UP-4\",\"Z-UP-5\",\"Z-UP-7\",\"Z-UP-8\",\"Z-UP-9\",\"Z-UP-10\",\"Z-UP-11\",\"Z-UP-12\",\"Z-UP-13\",\"Z-UP-15\",\"Z-UP-16\",\"Z-UP-17\",\"Z-UP-19\",\"Z-UP-21\",\"Z-UP-22\",\"Z-UP-23\",\"Z-UP-24\",\"Z-UP-26\",\"Z-UP-29\",\"Z-UP-30\",\"Z_TB_R3\",\"00透明\"],\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"type\": \"transparent\",  // normal外观样式，transparent（半透）\n            \"show\": \"true\"  // false（隐藏）\n        }\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "// 设备透明度、颜色（只有半透可以修改）\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Device\",\n    \"args\": {\n        \"placename\": \"走马庄副坝\",\n        \"IDs\":[\"00背水测护砌\",\"00反滤层\",\"00附属物\",\"00楼梯\",\"00面水侧护砌\",\"00壤土斜墙\",\"00排水沟\",\"沙砾料坝体\",\"00堤顶路及防漏墙\",\"00芯墙\",\"00走马庄隧洞\",\"00透明\",\"Z-GN-1-1\",\"Z-GN-1-2\",\"Z-GN-1-3\",\"Z-GN-1-4\",\"Z-GN-1-5\",\"Z-GN-1-6\",\"Z-GN-1-7\",\"Z-GN-1-8\",\"Z-GN-2-4\",\"Z-GN-2-5\",\"Z-GN-2-6\",\"Z-GN-2-7\",\"Z-GN-2-8\",\"Z-GN-3-3\",\"Z-GN-3-4\",\"Z-GN-3-5\",\"Z-GN-3-6\",\"Z-GN-3-7\",\"Z-GN-3-8\",\"Z-GN-L1\",\"Z-GN-R1\",\"Z-QZY-1-1\",\"Z-QZY-1-2\",\"Z-QZY-2-1\",\"Z-QZY-2-2\",\"Z-TB-L1\",\"Z-TB-L2\",\"Z-TB-L3\",\"Z-TB-R2\",\"Z-UP-20A\",\"Z-UP-20B\",\"Z-UP-28A\",\"Z-UP-28B\",\"Z-UP-1\",\"Z-UP-2\",\"Z-UP-3\",\"Z-UP-4\",\"Z-UP-5\",\"Z-UP-7\",\"Z-UP-8\",\"Z-UP-9\",\"Z-UP-10\",\"Z-UP-11\",\"Z-UP-12\",\"Z-UP-13\",\"Z-UP-15\",\"Z-UP-16\",\"Z-UP-17\",\"Z-UP-19\",\"Z-UP-21\",\"Z-UP-22\",\"Z-UP-23\",\"Z-UP-24\",\"Z-UP-26\",\"Z-UP-29\",\"Z-UP-30\",\"Z_TB_R3\",\"00透明\"],\n        \"action\": \"changeappearance\",\n        \"moreparameters\": {\n            \"type\": \"transparent\",  // 外观样式、transparent（半透）\n            \"opacity\": \"0.5\",  // 0.01-1\n            \"color\": \"ff0000ff\"  // 最后两位为透明度，传入0时恢复原状\n        }\n    }\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "// 设备抬升\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Device\",\n    \"args\": {\n        \"placename\": \"走马庄副坝\",\n        \"IDs\":[\"00背水测护砌\",\"00反滤层\",\"00附属物\",\"00楼梯\",\"00面水侧护砌\",\"00壤土斜墙\",\"00排水沟\",\"沙砾料坝体\",\"00堤顶路及防漏墙\",\"00芯墙\",\"00走马庄隧洞\",\"00透明\",\"Z-GN-1-1\",\"Z-GN-1-2\",\"Z-GN-1-3\",\"Z-GN-1-4\",\"Z-GN-1-5\",\"Z-GN-1-6\",\"Z-GN-1-7\",\"Z-GN-1-8\",\"Z-GN-2-4\",\"Z-GN-2-5\",\"Z-GN-2-6\",\"Z-GN-2-7\",\"Z-GN-2-8\",\"Z-GN-3-3\",\"Z-GN-3-4\",\"Z-GN-3-5\",\"Z-GN-3-6\",\"Z-GN-3-7\",\"Z-GN-3-8\",\"Z-GN-L1\",\"Z-GN-R1\",\"Z-QZY-1-1\",\"Z-QZY-1-2\",\"Z-QZY-2-1\",\"Z-QZY-2-2\",\"Z-TB-L1\",\"Z-TB-L2\",\"Z-TB-L3\",\"Z-TB-R2\",\"Z-UP-20A\",\"Z-UP-20B\",\"Z-UP-28A\",\"Z-UP-28B\",\"Z-UP-1\",\"Z-UP-2\",\"Z-UP-3\",\"Z-UP-4\",\"Z-UP-5\",\"Z-UP-7\",\"Z-UP-8\",\"Z-UP-9\",\"Z-UP-10\",\"Z-UP-11\",\"Z-UP-12\",\"Z-UP-13\",\"Z-UP-15\",\"Z-UP-16\",\"Z-UP-17\",\"Z-UP-18\",\"Z-UP-19\",\"Z-UP-21\",\"Z-UP-22\",\"Z-UP-23\",\"Z-UP-24\",\"Z-UP-26\",\"Z-UP-29\",\"Z-UP-30\",\"Z_TB_R3\",\"00透明\"],\n        \"action\": \"lift\",\n        \"moreparameters\": {\n            \"type\": \"normal\",\n            \"height\": \"200\"\n        }\n    }\n}"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "\"placename\": \"第一溢洪道\",\n        \"IDs\":[\"边墩\",\"底板\",\"混凝土结构\",\"弧形闸1\",\"弧形闸2\",\"弧形闸3\",\"弧形闸4\",\"弧形闸5\",\"检修吊机\",\"控制柜1\",\"控制柜2\",\"控制柜3\",\"控制柜4\",\"控制柜5\",\"临时检修盖板1\",\"临时检修盖板2\",\"临时检修盖板3\",\"临时检修盖板4\",\"临时检修盖板5\",\"配电柜1\",\"配电柜2\",\"配电柜3\",\"配电柜4\",\"配电柜5\",\"启闭机1\",\"启闭机2\",\"启闭机3\",\"启闭机4\",\"启闭机5\",\"挑坎\",\"泄槽\",\"液压杆1\",\"液压杆2\",\"液压杆3\",\"液压杆4\",\"液压杆5\",\"中墩1\",\"中墩2\",\"中墩3\",\"中墩4\",\"闸房\",\"00透明\"],\n\n\n        \"placename\": \"九松山副坝\",\n        \"IDs\":[\"04坝体换填料\",\"06粗砂反滤层\",\"07堤顶结构\",\"00附属物\",\"01块石护坡\",\"00排水沟\",\"03壤土斜墙\",\"02砂砾料保护层\",\"02砂砾料保护层2\",\"04砂砾料坝体\",\"00台子\",\"06下游排水反滤\",\"07下游压坡\",\"J-GN-1-1\",\"J-GN-1-2\",\"J-GN-1-3\",\"J-GN-1-4\",\"J-GN-1-5\",\"J-GN-1-6\",\"J-GN-1-7\",\"J-GN-1-8\",\"J-GN-1-9\",\"J-GN-1-10\",\"J-GN-2-3\",\"J-GN-2-4\",\"J-GN-2-5\",\"J-GN-2-6\",\"J-GN-2-7\",\"J-GN-2-9\",\"J-GN-2-10\",\"J-GN-3-2\",\"J-GN-3-3\",\"J-GN-3-4\",\"J-GN-3-5\",\"J-GN-3-6\",\"J-GN-3-8\",\"J-GN-3-9\",\"J-GN-3-10\",\"J-GN-L1\",\"J-GN-R1\",\"J-QZY-1-1\",\"J-QZY-1-2\",\"J-QZY-2-1\",\"J-QZY-2-2\",\"J-TB-L1\",\"J-TB-L2\",\"J-TB-L3\",\"J-TB-L4\",\"J-TB-L5\",\"J-TB-R1\",\"J-TB-R2\",\"J-TB-R3\",\"J-TB-R4\",\"J-UP-1\",\"J-UP-2\",\"J-UP-8A\",\"J-UP-8B\",\"J-UP-3\",\"J-UP-5\",\"J-UP-16A\",\"J-UP-16B\",\"J-UP-6\",\"J-UP-18A\",\"J-UP-18B\",\"J-UP-7\",\"J-UP-19A\",\"J-UP-9\",\"J-UP-20A\",\"J-UP-20B\",\"J-UP-10\",\"J-UP-22A\",\"J-UP-22B\",\"J-UP-11\",\"J-UP-13\",\"J-UP-14\",\"J-UP-15\",\"J-UP-17\",\"J-UP-21\",\"J-UP-23\",\"J-UP-24\",\"00透明\"],\n\n\n\n        \"placename\": \"走马庄副坝\",\n        \"IDs\":[\"00背水测护砌\",\"00反滤层\",\"00附属物\",\"00楼梯\",\"00面水侧护砌\",\"00壤土斜墙\",\"00排水沟\",\"沙砾料坝体\",\"00堤顶路及防漏墙\",\"00芯墙\",\"00走马庄隧洞\",\"00透明\",\"Z-GN-1-1\",\"Z-GN-1-2\",\"Z-GN-1-3\",\"Z-GN-1-4\",\"Z-GN-1-5\",\"Z-GN-1-6\",\"Z-GN-1-7\",\"Z-GN-1-8\",\"Z-GN-2-4\",\"Z-GN-2-5\",\"Z-GN-2-6\",\"Z-GN-2-7\",\"Z-GN-2-8\",\"Z-GN-3-3\",\"Z-GN-3-4\",\"Z-GN-3-5\",\"Z-GN-3-6\",\"Z-GN-3-7\",\"Z-GN-3-8\",\"Z-GN-L1\",\"Z-GN-R1\",\"Z-QZY-1-1\",\"Z-QZY-1-2\",\"Z-QZY-2-1\",\"Z-QZY-2-2\",\"Z-TB-L1\",\"Z-TB-L2\",\"Z-TB-L3\",\"Z-TB-R2\",\"Z-UP-20A\",\"Z-UP-20B\",\"Z-UP-28A\",\"Z-UP-28B\",\"Z-UP-1\",\"Z-UP-2\",\"Z-UP-3\",\"Z-UP-4\",\"Z-UP-5\",\"Z-UP-7\",\"Z-UP-8\",\"Z-UP-9\",\"Z-UP-10\",\"Z-UP-11\",\"Z-UP-12\",\"Z-UP-13\",\"Z-UP-15\",\"Z-UP-16\",\"Z-UP-17\",\"Z-UP-19\",\"Z-UP-21\",\"Z-UP-22\",\"Z-UP-23\",\"Z-UP-24\",\"Z-UP-26\",\"Z-UP-29\",\"Z-UP-30\",\"Z_TB_R3\",\"00透明\"], \n\n        \"placename\": \"..."
+      },
+      {
+        "col": 7,
+        "header": "None",
+        "value": "\"placename\": \"调节池\",\n        \"IDs\": [\"补\",\"调节池主体\",\"调节池堤坡修整\",\"调节池阀井\",\"调节池管理用房\",\"调节池金属结构1\",\"调节池金属结构2\",\"调节池交通桥\",\"调节池水机\"],\n\n\n \"placename\": \"第二溢洪道\",\n        \"IDs\": [\"边墩\",\"底板\",\"混凝土结构\",\"弧形闸1\",\"弧形闸2\",\"弧形闸3\",\"弧形闸4\",\"弧形闸5\",\"控制柜1\",\"控制柜2\",\"控制柜3\",\"配电柜1\",\"配电柜2\",\"配电柜3\",\"配电柜4\",\"启闭机1\",\"启闭机2\",\"启闭机3\",\"启闭机4\",\"启闭机5\",\"挑坎\",\"00透明\",\"泄槽\",\"中墩\",\"闸房\"],\n\n\n\n  \"placename\": \"潮河人防隧洞\",\n        \"IDs\": [\"闸门井\",\"扩散挑流段\",\"压力隧洞\"],\n\n  \"placename\": \"潮河输水隧洞\",\n \"IDs\": [\"启闭机室\",\"隧洞主体\",\"事故闸门井\",\"原事故闸门井\"],\n\n  \"placename\": \"第三溢洪道\",\n        \"IDs\": [\"边墩\",\"底板\",\"混泥土结构\",\"弧形闸1\",\"弧形闸2\",\"弧形闸3\",\"弧形闸4\",\"弧形闸5\",\"弧形闸6\",\"挑坎\",\"00透明\",\"泄槽\",\"中墩\",\"闸房\"],\n\n        \"placename\": \"白河发电隧洞\",\n        \"IDs\": [\"发电隧洞\",\"启闭机室\",\"00透明\"],\n\n        \"placename\": \"白河泄空隧洞\",\n        \"IDs\": [\"工作桥\",\"进水口\",\"00透明\",\"泄空隧洞\",\"消力池\",\"闸门井\"],\n\n\n        \"placename\": \"第九水厂引水隧洞\",\n        \"IDs\": [\"引水隧道\",\"岔管\",\"施工竖井\",\"泄水支洞\"],\n\n   \"placename\": \"潮河泄空隧洞\",\n        \"IDs\": [\"工作门启闭机室\",\"00透明\",\"尾水渠\",\"泄空隧道\",\"消力池\",\"闸门井启闭机室\"],"
+      }
+    ]
+  },
+  {
+    "row": 17,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "// 设备孤立"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata =// 设备孤立\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Device\",\n    \"args\": {\n    \"placename\": \"潮河主坝\",\n        \"IDs\": [\"C-GN-1-1\",\"C-GN-1-2\",\"C-GN-1-3\",\"C-GN-1-4\",\"C-GN-1-5\",\"C-GN-1-6\",\"C-GN-1-7\",\"C-GN-2-1\",\"C-GN-2-2\",\"C-GN-2-3\",\"C-GN-2-4\",\"C-GN-2-5\",\"C-GN-2-6\",\"C-GN-2-7\",\"C-GN-3-1\",\"C-GN-3-2\",\"C-GN-3-3\",\"C-GN-3-4\",\"C-GN-3-5\",\"C-GN-3-6\",\"C-GN-3-7\",\"C-GN-4-1\",\"C-GN-4-2\",\"C-GN-4-3\",\"C-GN-4-4\",\"C-GN-4-5\",\"C-GN-4-6\",\"C-GN-4-7\",\"C-GN-5-1\",\"C-GN-5-2\",\"C-GN-5-3\",\"C-GN-5-4\",\"C-GN-5-5\",\"C-GN-5-6\",\"C-GN-5-7\",\"C-GN-R1\",\"C-QZY-1-1\",\"C-QZY-1-2\",\"C-QZY-1-3\",\"C-QZY-2-1\",\"C-QZY-2-2\",\"C-QZY-Z\",\"C-TB-L1\",\"C-TB-L2\",\"C-TB-L3\",\"C-TB-L4\",\"C-TB-L5\",\"C-TB-R1\",\"C-TB-R2\",\"C-TB-R3\",\"C-TP-6-1\",\"C-TP-6-2\",\"C-TP-6-4\",\"C-UP-2\",\"C-UP-3\",\"C-UP-6\",\"C-UP-7\",\"C-UP-8\",\"C-UP-9\",\"C-UP-10\",\"C-UP-11\",\"C-UP-12\",\"C-UP-13A\",\"C-UP-13B\",\"C-UP-14\",\"C-UP-15\",\"C-UP-16\",\"C-UP-17\",\"C-UP-18\",\"C-UP-19A\",\"C-UP-19B\",\"C-UP-20\",\"C-UP-21\",\"C-UP-22\",\"C-UP-23\",\"C-UP-25\",\"C-UP-26\",\"C-UP-27\",\"C-UP-29\",\"C-UP-30\",\"C-UP-31\",\"0-粗砂反滤料层\",\"0-砂砾料坝体层\",\"0-单层干砌块护坡层\",\"0-防渗墙\",\"0-附属物\",\"0-干砌石灌混泥土护坡层\",\"0-干砌石护坡\",\"0-换填石渣\",\"0-路面和放浪墙\",\"0-排水沟\",\"0-壤土斜墙\",\"0-沙砾料保护层\",\"砂砾料压重\",\"0-碎石过渡层\",\"0-水中抛石\",\"0-原干砌石护坡\"],\n\n        \"action\": \"isolate\",\n        \"moreparameters\":{\n            \"type\": \"normal\",\n            \"strength\": 1\n          \n        }\n    }\n}\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "ID同BIM"
+      }
+    ]
+  },
+  {
+    "row": 18,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "溢洪道"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "// 闸门开启\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Sluice\",\n    \"args\": {\n        \"placename\": \"第三溢洪道\",  \n        \"Ids\":[\"01\",\"02\",\"03\",\"04\",\"05\",\"06\"],\n        \"action\": \"open\",\n        \"moreparameters\": {\n            \"openrange\": \"0.5\",  // 开启幅度（0~1）\n            \"duration\": \"2\"  // 持续时间\n        }\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "// 水花显隐\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Sluice\",\n    \"args\": {\n        \"placename\": \"第一溢洪道\",\n        \"Ids\":[\"01\",\"02\",\"03\",\"04\",\"05\",\"泄槽\"],\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"show\": \"true\"\n        }\n    }\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "// 泄流（只有第三溢洪道有）\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Sluice\",\n    \"args\": {\n        \"placename\": \"第三溢洪道\",\n        \"Ids\":[\"01\",\"02\",\"03\",\"04\",\"05\",\"06\"],\n        \"action\": \"setdischargeflow\",\n        \"moreparameters\": {\n            \"flowrate\": \"4\"  // 0 ~ 8\n        }\n    }\n}"
+      },
+      {
+        "col": 5,
+        "header": "None",
+        "value": "闸门：\n第一溢洪道：[\"01\",\"02\",\"03\",\"04\",\"05\"]\n第二溢洪道：[\"01\",\"02\",\"03\",\"04\",\"05\"]\n第三溢洪道：[\"01\",\"02\",\"03\",\"04\",\"05\",\"06“]\n\n水花：\n第一溢洪道：[\"01\",\"02\",\"03\",\"04\",\"05\",\"泄槽\"]\n第二溢洪道：[\"01\",\"02\",\"03\",\"04\",\"05\"]\n第三溢洪道：[\"01\",\"02\",\"03\",\"04\",\"05\",\"06\"]\n潮河人防隧洞：无IDS参数\n潮河输水隧洞：无IDS参数\n白河发电隧洞：无IDS参数"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "// 水花显隐\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"Sluice\",\n    \"args\": {\n        \"placename\": \"第一潮河输水隧洞\",\n\n        \"action\": \"setvisibility\",\n        \"moreparameters\": {\n            \"show\": \"true\"\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 19,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "设备点击回调信息示例"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"eventname\": \"onDeviceClicked\",\n    \"deviceinfo\": {\n        \"id\": \"00浆砌石坝坡\",\n        \"location\": {\n            \"longitude\": 116.817639,\n            \"latitude\": 40.491993,\n            \"altitude\": 328.171831\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 20,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "视频融合"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"apiClassName\": \"CustomAPI_VideoFusion\",\n    \"apiFuncName\": \"VideoFusion\",\n    \"args\": {\n        \"VideoID\": 2,\n        \"State\": \"Play\",\n        \"URL\": \"rtsp://admin:51@world@10.67.15.4:554\",\n        \"cameralocked\":false\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "\"VideoID\": 0白河,1第三溢洪道,2放水洞、3、4\n \"State\": Play/stop                // 更新状态\ncameralocked：相机是否锁定"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "{\n    \"apiClassName\": \"CustomAPI_VideoFusion\",\n    \"apiFuncName\": \"VideoFusion\",\n    \"args\": {\n        \"VideoID\": 0,  // 视频融合ID\n        \"State\": \"Play\",                      // 更新状态\n        \"URL\": \"E:/MiYunSimData/旧.mp4\"   // 视频融合链接\n    }\n}"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "{\n    \"apiClassName\": \"CustomAPI_VideoFusion\",\n    \"apiFuncName\": \"VideoFusion\",\n    \"args\": {\n        \"VideoID\": 0,  // 视频融合ID\n        \"State\": \"Play\",                      // 更新状态\n        \"URL\": \"E:/MiYunSimData/新.mp4\"   // 视频融合链接\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 21,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "// 倾斜设置旋转"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const eid = cache.get('threedtiles').eid;\n    App.Customize.RunCustomizeApi({\n      \"apiClassName\": \"GeoLayerAPI\",\n      \"apiFuncName\": \"SetGeoLayerRotation\",\n      \"args\": {\n        \"eid\": eid,\n        \"geoLayerIndex\": 0,\n        \"GeoLayerRotation\": [1, 0, 0]\n      }\n    })"
+      }
+    ]
+  },
+  {
+    "row": 22,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "加载倾斜摄影"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"http://14.103.8.151:30051/gis/miyunshuiku23dt/tileset.json\", // 3D Tiles server\n  \"geoLayerType\": \"3DTiles\"//图层类型\n})\nconst res = await App.Scene.Add(threedtiles)\nconsole.log(res);\n//tip::: 缓存全局对象,用于后续操作\nif(res.success) cache.set('threedtiles', threedtiles);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "file:///home/cloud/3DT/tileset.json"
+      },
+      {
+        "col": 8,
+        "header": "None",
+        "value": "第二"
+      },
+      {
+        "col": 9,
+        "header": "None",
+        "value": "第三"
+      },
+      {
+        "col": 10,
+        "header": "None",
+        "value": "北白岩"
+      },
+      {
+        "col": 11,
+        "header": "None",
+        "value": "九松山"
+      },
+      {
+        "col": 12,
+        "header": "None",
+        "value": "南石"
+      },
+      {
+        "col": 13,
+        "header": "None",
+        "value": "西石"
+      }
+    ]
+  },
+  {
+    "row": 23,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "有限元功能\n1）初次加载节点和单元数据创建有限元模型并渲染数据接口\n\n/home/cloud"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPICustomized\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_CHZB\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址，也支持用IP+绝对路径的形式，例如：\"file://10.66.12.121/xxx/xxxx/xxxx/xxx.dat\"，或\"file:\\\\\\\\10.66.12.121\\\\xxx\\\\xxxx\\\\xxxx\\\\xxx.dat\"\n\t\t\"unitPath\": \"E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/ChaoHeZhuBa/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t},\n\"Values\": [0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2,0.22,0.24,0.26,0.28,0.3,0.32,0.34,0.36,0.38,0.4,0.42],//颜色的阈值，颜色值Colors应该比阈值多一个\n\t\t\"Colors\": [\"0000FF\", \"0030FF\", \"0061FF\", \"0091FF\", \"00C2FF\", \"00F2FF\", \"00FFDB\", \"00FFAB\", \"00FF7A\", \"00FF4A\", \"00FF19\", \"19FF00\", \"4AFF00\", \"7AFF00\", \"ABFF00\", \"DBFF00\", \"FFF200\", \"FFC200\", \"FF9100\", \"FF6100\", \"FF3000\", \"FF0000\"]//颜色的色值\n\t}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPICustomized\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_BH\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/BaiHe/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/BaiHe/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/BaiHe/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPICustomized\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_CH\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/ChaoHe/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/ChaoHe/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/ChaoHe/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPICustomized\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_DYYHD\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/DiYiHongDao/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/DiYiHongDao/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/DiYiHongDao/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 7,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_ZMZ\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/ZouMaZhuang/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/ZouMaZhuang/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/ZouMaZhuang/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 8,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_DEYHD\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/DiErYiHongDao/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/DiErYiHongDao/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/DiErYiHongDao/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 9,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_DSYHD\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/DiSanYiHongDao/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/DiSanYiHongDao/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/DiSanYiHongDao/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 10,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_BBY\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/BeiBaiYan/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/BeiBaiYan/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/BeiBaiYan/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 11,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_JSS\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/JiuSongShan/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/JiuSongShan/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/JiuSongShan/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 12,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_NSLT\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/NanShiLuoTuo/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/NanShiLuoTuo/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/NanShiLuoTuo/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 13,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_XSLTFB\",  //在UE中的自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n\t\t\"pointsPath\": \"E:/MiYunSimData/XiShiLuoTuo/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n\t\t\"unitPath\": \"E:/MiYunSimData/XiShiLuoTuo/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n\t\t\"vertexSimValuesPath\": \"E:/MiYunSimData/XiShiLuoTuo/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\t\t\t\"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框设置\n\t\t\t\"bShowWireframe\": false,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值设定\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t}\n\t}\n}"
+      },
+      {
+        "col": 17,
+        "header": "None",
+        "value": "有限元\nMY_Dam_CHZB（潮河主坝）\nMY_Dam_BH（白河）\nMY_Dam_CH（潮河）\nMY_Dam_DYYHD（第一溢洪道）\nMY_Dam_ZMZ（走马庄）\n第二溢洪道-->MY_Dam_DEYHD\n第三溢洪道-->MY_Dam_DSYHD\n北白岩副坝-->MY_Dam_BBY\n西石骆驼副坝-->MY_Dam_XSLT\n南石骆驼副坝-->MY_Dam_NSLT\n九松山副坝-->MY_Dam_JSS"
+      }
+    ]
+  },
+  {
+    "row": 24,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "//国产化有限元加载"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n       \"apiClassName\": \"DamCaeAPICustomized\",\n        \"apiFuncName\": \"LoadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_CHZB\",  \n\t\t\"pointsPath\": \"/home/cloud/MiYunSimData/ChaoHe/ELENOD_Point.dat\",  \n\t\t\"unitPath\": \"/home/cloud/MiYunSimData/ChaoHe/ELENOD_Unit.dat\", \n\t\t\"vertexSimValuesPath\": \"/home/cloud/MiYunSimData/ChaoHe/SCA1.DAT\", \n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 1,  \n\t\t\t\"pointSimValueMin\": -0.005,  \n\t\t\t\"pointSimValueMax\": 0.035  \n\t\t},\n\t\t\"wireframeParams\": {  \n\t\t\t\"bShowWireframe\": false,  \n\t\t\t\"wireframeColor\": {  \n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t},\n\t\t\"Values\": [0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2,0.22,0.24,0.26,0.28,0.3,0.32,0.34,0.36,0.38,0.4,0.42],\n\t\t\"Colors\": [\"0000FF\", \"0030FF\", \"0061FF\", \"0091FF\", \"00C2FF\", \"00F2FF\", \"00FFDB\", \"00FFAB\", \"00FF7A\", \"00FF4A\", \"00FF19\", \"19FF00\", \"4AFF00\", \"7AFF00\", \"ABFF00\", \"DBFF00\", \"FFF200\", \"FFC200\", \"FF9100\", \"FF6100\", \"FF3000\", \"FF0000\"]\n\t}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n        \"apiClassName\": \"DamCaeAPICustomized\",\n        \"apiFuncName\": \"LoadDamCaeData\",\n        \"args\": {\n                \"guid\": \"\",\n                \"uniqueModelName\": \"MY_Dam_CHZB\",\n                \"pointsPath\": \"/home/cloud/MiYunSimData/ChaoHe/ELENOD_Point.dat\",\n                \"unitPath\": \"/home/cloud/MiYunSimData/ChaoHe/ELENOD_Unit.dat\",\n                \"vertexSimValuesPath\": \"/home/cloud/MiYunSimData/ChaoHe/SCA1.DAT\",\n                \"caeModelSimParams\": {\n                        \"pointSimValueColumnIndex\": 1,\n                        \"pointSimValueMin\": -0.005,\n                        \"pointSimValueMax\": 0.035\n                },\n                \"wireframeParams\": {\n                        \"bShowWireframe\": true,\n                        \"wireframeColor\": {\n                                \"r\": 0.80000001192092896,\n                                \"g\": 0.10000000149011612,\n                                \"b\": 0.10000000149011612,\n                                \"a\": 1.10000000149011612\n                        }\n                },\n                \"Values\": [],\n                \"Colors\": []\n        }\n}"
+      }
+    ]
+  },
+  {
+    "row": 25,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "有限元功能\n2）渲染数据更新接口（在上述接口基础上，要更新展示不同数据，或者不同列时）"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"SwitchSimData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_1\",  //工程命名的各坝体的名称\n\t\t\"vertexSimValuesPath\": \"E:/code/UnrealEngine/Engine/Plugins/51Hitech/CaeModelSim/Content/MiYunSimData/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址，如果是保持和初始接口一致的数据可为空不填，如果需要读其他数据，填入新的其他业务数据的.dat文件\n\t\t\"caeModelSimParams\": {\n\t\t\t\"pointSimValueColumnIndex\": 2,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n\n\t\t\t\"pointSimValueMin\": -0.015,  //设置业务数据对应色卡最小的阈值\n\t\t\t\"pointSimValueMax\": 0.05  //设置业务数据对应色卡最大的阈值\n\t\t},\n\t\t\"wireframeParams\": {  //网格线框更新\n\t\t\t\"bShowWireframe\": true,  //是否显示网格线框\n\t\t\t\"wireframeColor\": {  //网格线框的RGB值更新\n\t\t\t\t\"r\": 0.80000001192092896,\n\t\t\t\t\"g\": 0.10000000149011612,\n\t\t\t\t\"b\": 0.10000000149011612,\n\t\t\t\t\"a\": 0.10000000149011612\n\t\t\t}\n\t\t},\"Values\": [0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2,0.22,0.24,0.26,0.28,0.3,0.32,0.34,0.36,0.38,0.4,0.42],//颜色的阈值，颜色值Colors应该比阈值多一个\n\t\t\"Colors\": [\"0000FF\", \"0030FF\", \"0061FF\", \"0091FF\", \"00C2FF\", \"00F2FF\", \"00FFDB\", \"00FFAB\", \"00FF7A\", \"00FF4A\", \"00FF19\", \"19FF00\", \"4AFF00\", \"7AFF00\", \"ABFF00\", \"DBFF00\", \"FFF200\", \"FFC200\", \"FF9100\", \"FF6100\", \"FF3000\", \"FF0000\"]//颜色的色值\n\t}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "/run/media/cloud/efb7d341-a5b4-4e60-ba14-459d2edf46b9/密云水库/Main"
+      }
+    ]
+  },
+  {
+    "row": 26,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "有限元功能\n3）控制有限元模型的显隐"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"ShowOrHideDamCaeModel\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_1\",  //自定义名称\n\t\t\"bShow\": true//false；为隐藏，true；为显示\n\t}\n}"
+      }
+    ]
+  },
+  {
+    "row": 27,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "有限元功能\n4）控制有限元模型位置的偏移和旋转"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"apiClassName\": \"DamCaeAPI\",\n    \"apiFuncName\": \"SetDamCaeModelOffset\",\n    \"args\":\n    {\n        \"guid\": \"\",\n        \"uniqueModelName\": \"MY_Dam_1\",  //自定义名称\n        \"positionOffset\": [ 0, 0, 0 ],  //控制有限元模型的三轴偏移，单位：米\n        \"rotatorOffset\":  //控制有限元模型的三轴旋转角度，单位：度\n        {\n            \"pitch\": 0,\n            \"yaw\": 0,\n            \"roll\": 0\n        }\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 28,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "有限元功能\n5）删除有限元模型"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\"apiClassName\": \"DamCaeAPI\",\n\t\"apiFuncName\": \"UnloadDamCaeData\",\n\t\"args\": {\n\t\t\"guid\": \"\",\n\t\t\"uniqueModelName\": \"MY_Dam_1\"  //工程命名的各坝体的名称\n\t}\n}"
+      }
+    ]
+  },
+  {
+    "row": 29,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "有限元功能\n6）有限元模型剖切"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"apiClassName\": \"DamCaeAPI\",\n    \"apiFuncName\": \"RunCut\",\n    \"args\": {\n        \"guid\": \"\",\n        \"uniqueModelName\": \"MY_Dam_1\",  //工程命名的各坝体的名称\n        \"cutPosition\": 0,  //剖切的值，当上一次剖切是x轴的状态下，再剖切y轴时，会先恢复状态再切y轴设定的数值，不会基于x轴剖切基础上再对y轴剖切\n        \"cutDirection\": \"X_AXIS\",  //X_AXIS为X轴剖切，Y_AXIS为y轴剖切\n        \"bCutLessThan\": true,  //true为切除小于给定数值的部分 false为切除大于给定数值的部分\t\n        \"bEnableCut\": true, //false为关闭剖切状态，恢复整体，true为剖切状态\n        \"bHideCutFrame\": true, //true为隐藏被剖切掉的网格，false为显示全部网格\n    }\n}"
+      }
+    ]
+  },
+  {
+    "row": 30,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "设置洪峰速度"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakSpeed\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"speed\": 0.1,\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakSpeed\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"speed\": 0.1,\n\t\t\t\t\t\"floodPeakName\": \"Line2\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "// 定义API调用的通用函数\nasync function runCustomApi(apiClassName, apiFuncName, args) {\n    const jsondata = {\n        apiClassName: apiClassName,\n        apiFuncName: apiFuncName,\n        args: args\n    };\n    const res = await App.Customize.RunCustomizeApi(jsondata);\n    console.log(res);\n    return res;\n}\n\n// 主函数\nasync function main() {\n    // 设置洪峰文本\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakText\", {\n        guid: \"\",\n        hexColor: \"FFFFFF\",\n        size: 24,\n        customContent: true,\n        content: \"洪峰速度4：100m/s\",\n        floodPeakName: \"Line1\"\n    });\n\n    // 设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"Line1\"\n    });\n\n    // 设置洪峰速度\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakSpeed\", {\n        guid: \"\",\n        speed: 0.1,\n        floodPeakName: \"Line1\"\n    });\n\n    // 再次设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"Line1\"\n    });\n\n    // 播放洪峰\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakPlay\", {\n        guid: \"\",\n        floodPeakName: \"Line1\"\n    });\n}\n\n// 执行主函数\nmain().catch(console.error);"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "// 定义API调用的通用函数\nasync function runCustomApi(apiClassName, apiFuncName, args) {\n    const jsondata = {\n        apiClassName: apiClassName,\n        apiFuncName: apiFuncName,\n        args: args\n    };\n    const res = await App.Customize.RunCustomizeApi(jsondata);\n    console.log(res);\n    return res;\n}\n\n// 主函数\nasync function main() {\n    // 设置洪峰文本\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakText\", {\n        guid: \"\",\n        hexColor: \"FFFFFF\",\n        size: 24,\n        customContent: true,\n        content: \"洪峰速度4：100m/s\",\n        floodPeakName: \"Line2\"\n    });\n\n    // 设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"Line2\"\n    });\n\n    // 设置洪峰速度\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakSpeed\", {\n        guid: \"\",\n        speed: 0.1,\n        floodPeakName: \"Line2\"\n    });\n\n    // 再次设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"Line2\"\n    });\n\n    // 播放洪峰\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakPlay\", {\n        guid: \"\",\n        floodPeakName: \"Line2\"\n    });\n}\n\n// 执行主函数\nmain().catch(console.error);"
+      },
+      {
+        "col": 7,
+        "header": "None",
+        "value": "// 定义API调用的通用函数\nasync function runCustomApi(apiClassName, apiFuncName, args) {\n    const jsondata = {\n        apiClassName: apiClassName,\n        apiFuncName: apiFuncName,\n        args: args\n    };\n    const res = await App.Customize.RunCustomizeApi(jsondata);\n    console.log(res);\n    return res;\n}\n\n// 主函数\nasync function main() {\n    // 设置洪峰文本\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakText\", {\n        guid: \"\",\n        hexColor: \"FFFFFF\",\n        size: 24,\n        customContent: true,\n        content: \"洪峰速度4：100m/s\",\n        floodPeakName: \"line3\"\n    });\n\n    // 设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"line3\"\n    });\n\n    // 设置洪峰速度\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakSpeed\", {\n        guid: \"\",\n        speed: 0.1,\n        floodPeakName: \"line3\"\n    });\n\n    // 再次设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"line3\"\n    });\n\n    // 播放洪峰\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakPlay\", {\n        guid: \"\",\n        floodPeakName: \"line3\"\n    });\n}\n\n// 执行主函数\nmain().catch(console.error);"
+      },
+      {
+        "col": 8,
+        "header": "None",
+        "value": "// 定义API调用的通用函数\nasync function runCustomApi(apiClassName, apiFuncName, args) {\n    const jsondata = {\n        apiClassName: apiClassName,\n        apiFuncName: apiFuncName,\n        args: args\n    };\n    const res = await App.Customize.RunCustomizeApi(jsondata);\n    console.log(res);\n    return res;\n}\n\n// 主函数\nasync function main() {\n    // 设置洪峰文本\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakText\", {\n        guid: \"\",\n        hexColor: \"FFFFFF\",\n        size: 24,\n        customContent: true,\n        content: \"洪峰速度4：100m/s\",\n        floodPeakName: \"Line4\"\n    });\n\n    // 设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"Line4\"\n    });\n\n    // 设置洪峰速度\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakSpeed\", {\n        guid: \"\",\n        speed: 0.1,\n        floodPeakName: \"Line4\"\n    });\n\n    // 再次设置洪峰文本可见\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakTextVisible\", {\n        guid: \"\",\n        visible: true,\n        floodPeakName: \"Line3\"\n    });\n\n    // 播放洪峰\n    await runCustomApi(\"WIMFloodPeakRegister\", \"FloodPeakPlay\", {\n        guid: \"\",\n        floodPeakName: \"Line4\"\n    });\n}\n\n// 执行主函数\nmain().catch(console.error);"
+      }
+    ]
+  },
+  {
+    "row": 31,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "播放洪峰"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakPlay\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakPlay\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"floodPeakName\": \"Line2\"\n\t\t\t\t}\n\t\t\t}"
+      }
+    ]
+  },
+  {
+    "row": 32,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "暂停"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakPause\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakPause\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      }
+    ]
+  },
+  {
+    "row": 33,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "波头文字设置"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakText\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"hexColor\": \"FFFFFF\",\n\t\t\t\t\t\"size\": 24,\n\t\t\t\t\t\"customContent\": true,\n\t\t\t\t\t\"content\": \"洪峰速度：100m/s\",\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakText\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"hexColor\": \"FFFFFF\",\n\t\t\t\t\t\"size\": 24,\n\t\t\t\t\t\"customContent\": true,\n\t\t\t\t\t\"content\": \"洪峰速度：100m/s\",\n\t\t\t\t\t\"floodPeakName\": \"Line2\"\n\t\t\t\t}\n\t\t\t}"
+      }
+    ]
+  },
+  {
+    "row": 34,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "文字显示"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\"apiFuncName\": \"FloodPeakTextVisible\",\n\t\t\"args\":\n\t\t{\n\t\t\t\"guid\": \"\",\n\t\t\t\"visible\": true,\n\t\t\t\"floodPeakName\": \"Line1\"\n\t\t}\n\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\"apiFuncName\": \"FloodPeakTextVisible\",\n\t\t\"args\":\n\t\t{\n\t\t\t\"guid\": \"\",\n\t\t\t\"visible\": true,\n\t\t\t\"floodPeakName\": \"Line2\"\n\t\t}\n\t}"
+      }
+    ]
+  },
+  {
+    "row": 35,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "重新播放"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "const jsondata ={\n                                \"apiClassName\": \"WIMFloodPeakRegister\",\n                                \"apiFuncName\": \"FloodPeakJumpTime\",\n                                \"args\":\n                                {\n                                        \"guid\": \"\",\n                                        \"time\": 0,\n                                        \"floodPeakName\": \"Line1\"\n                                }\n                        }\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "const jsondata ={\n                                \"apiClassName\": \"WIMFloodPeakRegister\",\n                                \"apiFuncName\": \"FloodPeakJumpTime\",\n                                \"args\":\n                                {\n                                        \"guid\": \"\",\n                                        \"time\": 0,\n                                        \"floodPeakName\": \"Line2\"\n                                }\n                        }\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      }
+    ]
+  },
+  {
+    "row": 36,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "设置波头文字偏移"
+      }
+    ]
+  },
+  {
+    "row": 37,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "1.12）标准演进河道的显隐设置（NEW）\nFloodPeakVisible"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakVisible\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"isVisible\": false,\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakVisible\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"isVisible\": false,\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      }
+    ]
+  },
+  {
+    "row": 38,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "1.13）标准河道演进行进总时长设定（NEW）\nFloodPeakSetTotalTime"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\"apiClassName\": \"WIMFloodPeakRegister\",\n\"apiFuncName\": \"FloodPeakSetTotalTime\",\n\"args\":\n{\n\"guid\": \"\",\n\"time\": 100,\n\"floodPeakName\": \"Line1\"\n}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "可以调用本接口，来设定需要演进的总时长。\n注意：设定完这个后，需要再调用\"FloodPeakPlay\"，进行演进播放！\ntime：设定总播放时长（单位：秒）"
+      }
+    ]
+  },
+  {
+    "row": 39,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "1.14）标准河道演进的镜头跟随及取消镜头跟随（NEW）\nFloodPeakCameraFollow"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\"apiClassName\": \"WIMFloodPeakRegister\",\n\"apiFuncName\": \"FloodPeakCameraFollow\",\n\"args\":\n{\n\"guid\": \"\",\n\"isOpen\": true,\n\"pitch\": -20,\n\"cameraDistance\": 500,\n\"floodPeakName\": \"Line1\"\n}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "在河道演进播放的过程中，调用本接口，使镜头跟随波头。跟随波头的时候，镜头无法控制。\nisOpen：为true时，镜头进行跟随波头，为false时，镜头不跟随波头；\npitch：可通过设定此值，设置pitch值；\ncameraDistance：可通过设定此值，设置镜头到波头的高度距离"
+      },
+      {
+        "col": 7,
+        "header": "None",
+        "value": "const jsondata = {\n    \"apiClassName\": \"DamCaeAPI\",\n    \"apiFuncName\": \"LoadDamCaeData\",\n    \"args\": {\n        \"guid\": \"\",\n        \"uniqueModelName\": \"MY_Dam_3\",  //自定义名称，应对之后可能有多个坝或者建筑需要做，可以设定不同的有限元模型名称\n        \"pointsPath\": \"E:/ZouMa/ELENOD_Point.dat\",  //渲染机上存放点数据的绝对路径地址\n        \"unitPath\": \"E:/ZouMa/ELENOD_Unit.dat\",  //渲染机上存放网格数据的绝对路径地址\n        \"vertexSimValuesPath\": \"E:/ZouMa/SCA1.DAT\",  //渲染机上存放需要读取业务数据的绝对路径地址\n        \"caeModelSimParams\": {\n            \"pointSimValueColumnIndex\": 1,  //需要加载目标业务数据文件中的第几列的列数（不算最左边的节点编号列）\n            \"pointSimValueMin\": -0.005,  //设置业务数据对应色卡最小的阈值\n            \"pointSimValueMax\": 0.035  //设置业务数据对应色卡最大的阈值\n        }\n    }\n}\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      }
+    ]
+  },
+  {
+    "row": 40,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "标准河道演进的播放时，以百分比跳转\nFloodPeakJumpPercent"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n\t\t\t\t\"apiClassName\": \"WIMFloodPeakRegister\",\n\t\t\t\t\"apiFuncName\": \"FloodPeakJumpPercent\",\n\t\t\t\t\"args\":\n\t\t\t\t{\n\t\t\t\t\t\"guid\": \"\",\n\t\t\t\t\t\"percent\": 0,\n\t\t\t\t\t\"floodPeakName\": \"Line1\"\n\t\t\t\t}\n\t\t\t}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "percent：百分比，0~1的值\n注意：\n1）如果需要在演进到一半时重新播放，可把\"percent\"设置为0后，即可重头播放；\n2）如果需要在播放完毕时重头播放，可把\"percent\"设置为0后，再执行“FloodPeakPlay”播放接口，实现重头播放。"
+      }
+    ]
+  },
+  {
+    "row": 41,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "pw0tzlqa90664d"
+      }
+    ]
+  },
+  {
+    "row": 42,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "三维水质"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "//创建点云\n{\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"CreatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"LocalDataUrl\": \"E:/MiYunSimData/Data/grid-UTM.csv\",//点云位置数据，csv格式\n\t\t\"PollutionDataUrl\": [//点云污染物数据，json或txt格式，以数组存储不同时序的污染数据\n\t\t\t\"E:/MiYunSimData/Data/pollution0.txt\",\n\t\t\t\"E:/MiYunSimData/Data/pollution1.txt\",\n\t\t\t\"E:/MiYunSimData/Data/pollution2.txt\",\n\t\t\t\"E:/MiYunSimData/Data/pollution3.txt\",\n\t\t\t\"E:/MiYunSimData/Data/pollution4.txt\"\n\t\t],\n\t\t\"Coordinate\": \"Geo\",//点云位置数据坐标格式，Local是局部坐标，Coordinate是经纬度坐标\n\t\t\"CurrentValueIndex\": 0,//初始显示的数据时序\n\t\t\"PointSize\": 2,//每个点云的尺寸\n\t\t\"Offset\": [0,0, 200], //点云的位置偏移值，坐标为米\n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],//颜色的阈值，颜色值Colors应该比阈值多一个\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],//颜色的色值\n\t\t\"Opacity\": 0.5,  //点云透明度\n                \"HeightScale\": 1\n\t}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"CreatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",\n\t\t\"LocalDataUrl\": \"file://10.66.12.53/x.public/exchange/TMP_THJ/PointCloud/grid-UTM.csv\",\n\t\t\"PollutionDataUrl\": [\n\t\t\t\"file://10.66.12.53/x.public/exchange/TMP_THJ/PointCloud/pollution1.json\",\n\t\t\t\"file://10.66.12.53/x.public/exchange/TMP_THJ/PointCloud/pollution2.json\"\n\t\t],\n\t\t\"Coordinate\": \"Geo\",\n\t\t\"CurrentValueIndex\": 0,\n\t\t\"PointSize\": 2,\n\t\t\"Offset\": [0,0, 200], \n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],\n\t\t\"Opacity\": 0.5\n\t}\n}"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "{\n\t\"apiClassName\": \"PointCloudSimAPICustomized\",\n\t\"apiFuncName\": \"CreatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"LocalDataUrl\": \"/home/cloud/MiYunSimData/Data/grid-UTM.csv\",//点云位置数据，csv格式\n\t\t\"PollutionDataUrl\": [//点云污染物数据，json或txt格式，以数组存储不同时序的污染数据\n\t\t\t\"/home/cloud/MiYunSimData/Data/pollution0.txt\",\n\t\t\t\"/home/cloud/MiYunSimData/Data/pollution1.txt\",\n\t\t\t\"/home/cloud/MiYunSimData/Data/pollution2.txt\",\n\t\t\t\"/home/cloud/MiYunSimData/Data/pollution3.txt\",\n\t\t\t\"/home/cloud/MiYunSimData/Data/pollution4.txt\"\n\t\t],\n\t\t\"Coordinate\": \"Geo\",//点云位置数据坐标格式，Local是局部坐标，Coordinate是经纬度坐标\n\t\t\"CurrentValueIndex\": 0,//初始显示的数据时序\n\t\t\"PointSize\": 2,//每个点云的尺寸\n\t\t\"Offset\": [0,0, 200], //点云的位置偏移值，坐标为米\n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],//颜色的阈值，颜色值Colors应该比阈值多一个\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],//颜色的色值\n\t\t\"Opacity\": 0.5//点云透明度\n\t}\n}"
+      },
+      {
+        "col": 5,
+        "header": "None",
+        "value": "//支持传入http协议数据\nconst jsondata = {\n\t\"apiClassName\": \"PointCloudSimAPICustomized\",\n\t\"apiFuncName\": \"CreatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"LocalDataUrl\": \"http://10.66.8.47:8000/download/PointCloudData.csv\",//点云位置数据，csv格式\n\t\t\"PollutionDataUrl\":  [\n                        \"http://10.66.8.47:8000/download/pollution0.json\",\n                        \"http://10.66.8.47:8000/download/pollution1.json\",\n                        \"http://10.66.8.47:8000/download/pollution2.json\",\n                        \"http://10.66.8.47:8000/download/pollution3.json\",\n                        \"http://10.66.8.47:8000/download/pollution4.json\"\n                ],\n\t\t\"Coordinate\": \"Geo\",//点云位置数据坐标格式，Local是局部坐标，Coordinate是经纬度坐标\n\t\t\"CurrentValueIndex\": 0,//初始显示的数据时序\n\t\t\"PointSize\": 2,//每个点云的尺寸\n\t\t\"Offset\": [0,0, 200], //点云的位置偏移值，坐标为米\n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],//颜色的阈值，颜色值Colors应该比阈值多一个\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],//颜色的色值\n\t\t\"Opacity\": 0.5//点云透明度\n\t}\n}\nconst res = await App.Customize.RunCustomizeApi(jsondata);\nconsole.log(res);"
+      },
+      {
+        "col": 6,
+        "header": "None",
+        "value": "{\n        \"apiClassName\": \"PointCloudSimAPICustomized\",\n        \"apiFuncName\": \"CreatePointCloudSim\",\n        \"args\": {\n                \"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n                \"LocalDataUrl\": \"http://wimapi.51aes.com/v1/asset/share/jQnyGq2i\",//点云位置数据，csv格式\n                \"PollutionDataUrl\": [//点云污染物数据，json或txt格式，以数组存储不同时序的污染数据\n                        \"http://wimapi.51aes.com/v1/asset/share/VsRqyzCr\",\n\n                ],\n                \"Coordinate\": \"Geo\",//点云位置数据坐标格式，Local是局部坐标，Coordinate是经纬度坐标\n                \"CurrentValueIndex\": 0,//初始显示的数据时序\n                \"PointSize\": 2,//每个点云的尺寸\n                \"Offset\": [0,0, 200], //点云的位置偏移值，坐标为米\n                \"Values\": [0.29, 0.31, 0.33, 0.35],//颜色的阈值，颜色值Colors应该比阈值多一个\n                \"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],//颜色的色值\n                \"Opacity\": 0.5//点云透明度\n        }\n}"
+      }
+    ]
+  },
+  {
+    "row": 43,
+    "cols": [
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "//切换时序数据\n{\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"SetCurrentValueIndex\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"CurrentValueIndex\": 1,//要切换到第几帧时序\n\t\t\"Time\": 1//切换过渡时间\n\t}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"SetCurrentValueIndex\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//\n\t\t\"CurrentValueIndex\": 1,//\n\t\t\"Time\": 1//\n\t}\n}"
+      },
+      {
+        "col": 5,
+        "header": "None",
+        "value": "//切换时序数据\n{\n\t\"apiClassName\": \"PointCloudSimAPICustomized\",\n\t\"apiFuncName\": \"SetCurrentValueIndex\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"CurrentValueIndex\": 1,//要切换到第几帧时序\n\t\t\"Time\": 1//切换过渡时间\n\t}\n}"
+      }
+    ]
+  },
+  {
+    "row": 44,
+    "cols": [
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "//更改点云参数和样式\n{\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"UpdatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"PointSize\": 2,\n\t\t\"Offset\": [-495779.9,4478137.5, 200], \n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],\n\t\t\"Opacity\": 0.5\n\t}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n\t\"apiClassName\": \"PointCloudSimAPI\",\n\t\"apiFuncName\": \"UpdatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//\n\t\t\"PointSize\": 1,\n\t\t\"Offset\": [0,0, -1000], \n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],\n\t\t\"Opacity\": 0.5\n\t}\n}"
+      },
+      {
+        "col": 5,
+        "header": "None",
+        "value": "//更改点云参数和样式\n{\n\t\"apiClassName\": \"PointCloudSimAPICustomized\",\n\t\"apiFuncName\": \"UpdatePointCloudSim\",\n\t\"args\": {\n\t\t\"PointSimName\": \"TEST\",//点云名称，用于标识和查找点云\n\t\t\"PointSize\": 2,\n\t\t\"Offset\": [-495779.9,4478137.5, 200], \n\t\t\"Values\": [0.29, 0.31, 0.33, 0.35],\n\t\t\"Colors\": [\"#00ff00\", \"#55ff00\",  \"#ffff00\", \"#ff5500\",\"#ff0000\"],\n\t\t\"Opacity\": 0.5\n\t}\n}"
+      }
+    ]
+  },
+  {
+    "row": 45,
+    "cols": [
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "//删除点云\n{\n\"apiClassName\": \"PointCloudSimAPI\",\n\"apiFuncName\": \"RemovePointCloudSim\",\n\"args\": {\n\"PointSimName\": \"TEST\"//点云名称，用于标识和查找点云\n}\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "{\n    \"apiClassName\": \"PointCloudSimAPI\",\n    \"apiFuncName\": \"SetCurrentValueIndex\",\n    \"args\": {\n        \"PointSimName\": \"TEST\",\n        \"CurrentValueIndex\": 1,\n        \"Time\": 1\n    }\n}"
+      },
+      {
+        "col": 5,
+        "header": "None",
+        "value": "//删除点云\n{\n\"apiClassName\": \"PointCloudSimAPICustomized\",\n\"apiFuncName\": \"RemovePointCloudSim\",\n\"args\": {\n\"PointSimName\": \"TEST\"//点云名称，用于标识和查找点云\n}\n}"
+      }
+    ]
+  },
+  {
+    "row": 46,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "模型孤立"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"ObjectsIsolate\",\n    \"args\": {\n        \"ids\": [\n            \"TEST\", \"MY_Dam_BH\"  \n        ],\n        \"Strength\": 1\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "ids：有限元模型或点云模型的名字数组\nstrength：强度"
+      },
+      {
+        "col": 4,
+        "header": "None",
+        "value": "MY_Dam_CHZB\nMY_Dam_ZMZ\nMY_Dam_JSS\nMY_Dam_BH"
+      }
+    ]
+  },
+  {
+    "row": 47,
+    "cols": [
+      {
+        "col": 1,
+        "header": "E:/MiYunSimData/ChaoHeZhuBa/ELENOD_Unit.da",
+        "value": "浸润线"
+      },
+      {
+        "col": 2,
+        "header": "\n// threeDTilesLayer\nconst threedtiles = new App.GeoLayer({\n  \"geoLayerUrl\": \"ht",
+        "value": "//潮河\n{\n    \"apiClassName\": \"CustomApi\",\n    \"apiFuncName\": \"ProfileSaturationLine\",\n    \"args\": {\n        \"PiezometerTubeHeight\": [120,110,100],  // 测压管水位，从左至右\n        \"Height1\": 157,  // 水面高度\n        \"Height2\": 130,  // 转折点高度\n        \"visible\": true  // 是否显示\n    }\n}"
+      },
+      {
+        "col": 3,
+        "header": "//光斑测试3D文字\n{\n    \"apiClassName\": \"WdpSceneAPI\",\n    \"apiFuncName\": \"CreateEntiti",
+        "value": "//与孤立功能逻辑冲突，无法一起展示"
+      }
+    ]
+  }
+]

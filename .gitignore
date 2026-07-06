@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tif
+*.tiff
+淹没水深计算系统V2.0/
+data/flood/
+dem_annotations.json
+.DS_Store

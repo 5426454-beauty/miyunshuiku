@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>密云水库 ≤150.0m 低洼区域</name>
+  <Placemark>
+    <name>白河主坝  2294.44 km²</name>
+    <Style>
+      <LineStyle><color>cc0000ff</color><width>3</width></LineStyle>
+      <PolyStyle><color>4c0000ff</color><fill>1</fill><outline>1</outline></PolyStyle>
+    </Style>
+    <Polygon>
+      <extrude>1</extrude>
+      <altitudeMode>clampToGround</altitudeMode>
+      <outerBoundaryIs>
+        <LinearRing>
+          <coordinates>
+            116.3673579985,40.290870417,0 117.1325486115,40.290870417,0 117.1325486115,40.608843743,0 116.3673579985,40.608843743,0 116.3673579985,40.290870417,0
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>白河主坝·1号  6.03 km²</name>
+    <Style>
+      <LineStyle><color>cc0000ff</color><width>3</width></LineStyle>
+      <PolyStyle><color>4c0000ff</color><fill>1</fill><outline>1</outline></PolyStyle>
+    </Style>
+    <Polygon>
+      <extrude>1</extrude>
+      <altitudeMode>clampToGround</altitudeMode>
+      <outerBoundaryIs>
+        <LinearRing>
+          <coordinates>
+            116.2089262105,40.305414322,0 116.24318283950001,40.305414322,0 116.24318283950001,40.324033758,0 116.2089262105,40.324033758,0 116.2089262105,40.305414322,0
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

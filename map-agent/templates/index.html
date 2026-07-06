@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地图智能分析系统</title>
+<style>
+/* ── Reset & Base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0d1117; color: #c9d1d9;
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────────── */
+#sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 340px; height: 100vh;
+    background: #161b22;
+    border-right: 1px solid #30363d;
+    display: flex; flex-direction: column;
+    z-index: 1000; overflow-y: auto; overflow-x: hidden;
+}
+#map {
+    position: fixed; top: 0;
+    left: 340px; right: 310px; height: 100vh;
+}
+
+/* ── Sidebar Header ───────────────────────────────────────────────────────── */
+.s-header {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+.s-title {
+    font-size: 15px; font-weight: 700;
+    color: #58a6ff; letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 8px;
+}
+.s-title svg { flex-shrink: 0; }
+.s-subtitle { font-size: 11px; color: #8b949e; margin-top: 4px; }
+
+/* ── Control Section ──────────────────────────────────────────────────────── */
+.s-control {
+    padding: 14px 16px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+.input-label {
+    font-size: 11px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 6px;
+}
+#target-input {
+    width: 100%; padding: 9px 12px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 13px; outline: none;
+    transition: border-color 0.15s;
+}
+#target-input:focus { border-color: #58a6ff; }
+#target-input::placeholder { color: #484f58; }
+.btn-row { display: flex; gap: 8px; margin-top: 10px; }
+.btn {
+    flex: 1; padding: 9px 0;
+    border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.82; }
+.btn:active { opacity: 0.65; }
+#start-btn { background: #1f6feb; color: #fff; }
+#stop-btn  { background: #b91c1c; color: #fff; display: none; }
+
+/* ── Viewport Info Panel ──────────────────────────────────────────────────── */
+.s-info {
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+    background: #0d1117;
+}
+.s-info-title {
+    font-size: 10px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 6px;
+}
+.info-meta {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 5px;
+}
+.info-chip {
+    font-size: 11px; color: #8b949e;
+    display: flex; align-items: baseline; gap: 4px;
+}
+.info-chip + .info-chip { margin-left: 18px; }
+.info-chip-val {
+    color: #58a6ff; font-weight: 700; font-size: 13px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+}
+.info-region-row {
+    font-size: 11px; color: #8b949e;
+    margin-bottom: 6px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.info-region-row span { color: #c9d1d9; }
+.corners-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 6px;
+}
+.corner-item {
+    display: flex; gap: 4px; align-items: flex-start;
+}
+.corner-dir {
+    font-size: 10px; color: #3fb950; font-weight: 700;
+    width: 18px; flex-shrink: 0; margin-top: 1px;
+}
+.corner-val {
+    font-size: 10px; color: #8b949e;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    line-height: 1.4; white-space: pre;
+}
+.info-note {
+    font-size: 9px; color: #484f58;
+    margin-top: 5px; letter-spacing: 0.3px;
+}
+
+/* ── Status Badge ─────────────────────────────────────────────────────────── */
+#status-bar {
+    padding: 6px 16px;
+    font-size: 11px; color: #8b949e;
+    border-bottom: 1px solid #30363d;
+    display: flex; align-items: center; gap: 6px;
+    flex-shrink: 0;
+}
+.dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #484f58; flex-shrink: 0;
+}
+.dot.running { background: #3fb950; animation: pulse 1.4s ease-in-out infinite; }
+.dot.error   { background: #f85149; }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+}
+
+/* ── Log ──────────────────────────────────────────────────────────────────── */
+.s-section {
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+.s-section-title {
+    font-size: 11px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 6px;
+}
+#log {
+    height: 130px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 8px 16px;
+    font-size: 12px; line-height: 1.65;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+}
+#log::-webkit-scrollbar { width: 4px; }
+#log::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+.log-item { display: flex; gap: 6px; padding: 2px 0; }
+.log-time { color: #484f58; flex-shrink: 0; }
+.log-msg  { color: #8b949e; word-break: break-all; }
+.log-msg.action { color: #58a6ff; }
+.log-msg.done   { color: #3fb950; }
+.log-msg.err    { color: #f85149; }
+
+/* ── Preview ──────────────────────────────────────────────────────────────── */
+.s-preview {
+    padding: 10px 16px 14px;
+    border-top: 1px solid #30363d;
+    flex-shrink: 0;
+}
+#preview-wrap {
+    position: relative; border-radius: 6px; overflow: hidden;
+    border: 1px solid #30363d;
+    background: #0d1117;
+    min-height: 40px;
+    display: flex; align-items: center; justify-content: center;
+}
+#preview-img { width: 100%; display: none; }
+#preview-placeholder { font-size: 11px; color: #484f58; padding: 12px; }
+#step-badge {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(0,0,0,0.65); color: #58a6ff;
+    font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 20px; display: none;
+}
+
+/* ── Search Section ───────────────────────────────────────────────────────── */
+.s-search {
+    padding: 12px 16px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+#search-wrap { display: flex; gap: 6px; }
+#search-input {
+    flex: 1; padding: 8px 12px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 13px; outline: none;
+    transition: border-color 0.15s;
+}
+#search-input:focus { border-color: #58a6ff; }
+#search-input::placeholder { color: #484f58; }
+#search-input.err { border-color: #f85149; }
+#search-btn {
+    padding: 8px 14px;
+    background: #238636; border: none; border-radius: 6px;
+    color: #fff; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s; white-space: nowrap;
+}
+#search-btn:hover { opacity: 0.85; }
+#search-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Search Dropdown ──────────────────────────────────────────────────────── */
+#search-dropdown {
+    position: fixed;
+    background: #1c2128;
+    border: 1px solid #30363d;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    z-index: 2000;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+#search-dropdown.open { display: block; }
+#search-dropdown::-webkit-scrollbar { width: 4px; }
+#search-dropdown::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+.sdrop-sep {
+    padding: 5px 10px 4px;
+    font-size: 10px; color: #484f58;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #21262d;
+    position: sticky; top: 0; background: #1c2128;
+}
+.sdrop-sep button {
+    background: none; border: none; color: #f85149;
+    font-size: 10px; cursor: pointer; padding: 0; font-family: inherit;
+}
+.sdrop-sep button:hover { text-decoration: underline; }
+.sdrop-item {
+    padding: 7px 10px; font-size: 12px; cursor: pointer; color: #c9d1d9;
+    display: flex; align-items: flex-start; gap: 7px;
+    border-bottom: 1px solid #21262d;
+}
+.sdrop-item:last-child { border-bottom: none; }
+.sdrop-item:hover { background: #21262d; }
+.sdrop-icon { color: #8b949e; flex-shrink: 0; font-size: 11px; padding-top: 1px; }
+.sdrop-sub { font-size: 10px; color: #8b949e; margin-top: 2px; }
+
+/* ── Measure Section ──────────────────────────────────────────────────────── */
+.s-measure {
+    padding: 12px 16px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+.s-measure-title {
+    font-size: 11px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+.measure-btns { display: flex; gap: 6px; }
+.measure-btn {
+    flex: 1; padding: 8px 0;
+    border: 1px solid #30363d; border-radius: 6px;
+    background: #0d1117; color: #c9d1d9;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+}
+.measure-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+.measure-btn.active { border-color: #3fb950; color: #3fb950; background: #0f2a17; }
+#measure-clear {
+    width: 100%; margin-top: 6px; padding: 7px 0;
+    border: 1px solid #30363d; border-radius: 6px;
+    background: transparent; color: #8b949e;
+    font-size: 12px; cursor: pointer; transition: all 0.15s;
+}
+#measure-clear:hover { border-color: #f85149; color: #f85149; }
+
+/* ── Analyze Section ──────────────────────────────────────────────────────── */
+.s-analyze {
+    padding: 12px 16px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+.s-analyze-title {
+    font-size: 11px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 6px;
+}
+#analyze-input {
+    width: 100%; padding: 9px 12px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 13px; outline: none;
+    transition: border-color 0.15s;
+}
+#analyze-input:focus { border-color: #3fb950; }
+#analyze-input::placeholder { color: #484f58; }
+#analyze-btn {
+    width: 100%; margin-top: 8px; padding: 9px 0;
+    border: none; border-radius: 6px;
+    background: #238636; color: #fff;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s;
+}
+#analyze-btn:hover { opacity: 0.82; }
+#analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+#analyze-result {
+    margin-top: 8px; padding: 8px 10px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; font-size: 12px;
+    color: #3fb950; line-height: 1.6;
+    display: none; white-space: pre-wrap; word-break: break-all;
+}
+/* ── AI 浮动对话面板 ──────────────────────────────────────────────────────────── */
+#chat-fab {
+    position: fixed; right: 334px; bottom: 28px;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: #1f6feb; color: #fff; font-size: 22px;
+    border: none; cursor: pointer; z-index: 600;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.15s;
+}
+#chat-fab:hover { opacity: 0.85; }
+
+#chat-panel {
+    position: fixed; right: 334px; bottom: 88px;
+    width: 370px; height: 500px;
+    background: #161b22; border: 1px solid #30363d;
+    border-radius: 12px; z-index: 600;
+    display: none; flex-direction: column;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+}
+#chat-panel.open { display: flex; }
+
+#cp-header {
+    padding: 12px 14px 11px;
+    background: #21262d; border-bottom: 1px solid #30363d;
+    border-radius: 12px 12px 0 0;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+}
+#cp-title { font-size: 13px; font-weight: 700; color: #58a6ff; }
+#cp-subtitle { font-size: 10px; color: #8b949e; margin-top: 1px; }
+#cp-clear {
+    background: none; border: none; color: #8b949e;
+    font-size: 11px; cursor: pointer; padding: 3px 7px;
+    border-radius: 4px; transition: all 0.12s;
+}
+#cp-clear:hover { color: #f85149; background: rgba(248,81,73,0.1); }
+
+#cp-msgs {
+    flex: 1; overflow-y: auto; padding: 12px 12px 6px;
+    display: flex; flex-direction: column; gap: 9px;
+}
+#cp-msgs::-webkit-scrollbar { width: 4px; }
+#cp-msgs::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+
+.cm {
+    max-width: 90%; padding: 9px 12px;
+    border-radius: 12px; font-size: 13px;
+    line-height: 1.6; word-break: break-word; white-space: pre-wrap;
+}
+.cm.user {
+    background: #1f6feb; color: #fff;
+    align-self: flex-end; border-radius: 12px 12px 3px 12px;
+}
+.cm.ai {
+    background: #21262d; color: #c9d1d9;
+    align-self: flex-start; border: 1px solid #30363d;
+    border-radius: 12px 12px 12px 3px;
+}
+.cm.ai.loading { color: #8b949e; font-style: italic; }
+
+#cp-foot {
+    padding: 10px 12px; border-top: 1px solid #30363d;
+    display: flex; gap: 8px; align-items: center; flex-shrink: 0;
+}
+#cp-input {
+    flex: 1; padding: 9px 12px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 8px; color: #e6edf3; font-size: 13px;
+    outline: none; transition: border-color 0.15s;
+}
+#cp-input:focus { border-color: #58a6ff; }
+#cp-input::placeholder { color: #484f58; }
+#cp-input:disabled { opacity: 0.5; }
+#cp-send {
+    padding: 9px 14px; background: #1f6feb; color: #fff;
+    border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; flex-shrink: 0; transition: opacity 0.15s;
+}
+#cp-send:hover { opacity: 0.85; }
+#cp-send:disabled { opacity: 0.4; cursor: not-allowed; }
+.marker-popup {
+    background: rgba(220, 38, 38, 0.92);
+    color: #fff; padding: 4px 9px;
+    border-radius: 5px; font-size: 12px;
+    white-space: nowrap; pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* ── Traverse Section ────────────────────────────────────────────────────── */
+.s-traverse {
+    padding: 12px 16px;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+}
+.s-traverse-title {
+    font-size: 11px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+.traverse-row { display: flex; gap: 6px; margin-bottom: 8px; }
+#tv-draw-btn {
+    flex: 1; padding: 8px 0;
+    border: 1px solid #30363d; border-radius: 6px;
+    background: #0d1117; color: #c9d1d9;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+}
+#tv-draw-btn:hover  { border-color: #58a6ff; color: #58a6ff; }
+#tv-draw-btn.active { border-color: #3fb950; color: #3fb950; background: #0f2a17; }
+#tv-clear-btn {
+    padding: 8px 10px;
+    border: 1px solid #30363d; border-radius: 6px;
+    background: #0d1117; color: #8b949e;
+    font-size: 12px; cursor: pointer; transition: all 0.15s;
+}
+#tv-clear-btn:hover { border-color: #f85149; color: #f85149; }
+#tv-bounds-info {
+    font-size: 10px; color: #484f58;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    margin-bottom: 8px; line-height: 1.5;
+    display: none;
+}
+#tv-bounds-info.show { display: block; }
+#tv-bounds-info span { color: #8b949e; }
+.tv-zoom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.tv-zoom-lbl { font-size: 11px; color: #8b949e; flex-shrink: 0; }
+#tv-zoom, #tv-wl-filter {
+    flex: 1; padding: 6px 8px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 12px;
+    outline: none;
+}
+#tv-tile-est { font-size: 10px; color: #484f58; flex-shrink: 0; }
+#tv-wl-hint {
+    font-size: 10px; color: #d29922;
+    background: rgba(210,153,34,0.08);
+    border: 1px solid rgba(210,153,34,0.25);
+    border-radius: 4px;
+    padding: 4px 7px; margin-bottom: 8px;
+    line-height: 1.4;
+}
+#tv-prompt {
+    width: 100%; padding: 8px 10px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 12px;
+    outline: none; transition: border-color 0.15s; margin-bottom: 8px;
+}
+#tv-prompt:focus { border-color: #58a6ff; }
+#tv-prompt::placeholder { color: #484f58; }
+.traverse-btns { display: flex; gap: 6px; }
+#tv-start-btn {
+    flex: 1; padding: 8px 0;
+    border: none; border-radius: 6px;
+    background: #1f6feb; color: #fff;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s;
+}
+#tv-start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+#tv-start-btn:hover:not(:disabled) { opacity: 0.85; }
+#tv-stop-btn {
+    padding: 8px 12px;
+    border: none; border-radius: 6px;
+    background: #b91c1c; color: #fff;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; display: none; transition: opacity 0.15s;
+}
+#tv-stop-btn:hover { opacity: 0.85; }
+#tv-progress-bar {
+    height: 3px; background: #30363d; border-radius: 2px;
+    margin-top: 8px; display: none; overflow: hidden;
+}
+#tv-progress-fill { height: 100%; background: #1f6feb; width: 0%; transition: width 0.3s; }
+#tv-progress-txt {
+    font-size: 10px; color: #8b949e; margin-top: 4px; display: none;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+/* ── Traverse Summary Modal ───────────────────────────────────────────────── */
+#tv-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 10000; display: none;
+    align-items: center; justify-content: center;
+}
+#tv-modal.open { display: flex; }
+#tv-modal-box {
+    background: #161b22; border: 1px solid #30363d;
+    border-radius: 12px; width: 540px; max-height: 80vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+}
+#tv-modal-hdr {
+    padding: 14px 18px 12px;
+    background: #21262d; border-bottom: 1px solid #30363d;
+    border-radius: 12px 12px 0 0;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: move; user-select: none;
+}
+#tv-reopen-btn {
+    display: none; width: 100%; margin-top: 6px; padding: 7px 0;
+    border: 1px solid #30363d; border-radius: 6px;
+    background: transparent; color: #8b949e;
+    font-size: 11px; cursor: pointer; transition: all 0.15s;
+}
+#tv-reopen-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+#tv-modal-title { font-size: 14px; font-weight: 700; color: #58a6ff; }
+#tv-modal-close {
+    background: none; border: none; color: #8b949e;
+    font-size: 16px; cursor: pointer; line-height: 1;
+}
+#tv-modal-close:hover { color: #f85149; }
+#tv-modal-body {
+    flex: 1; overflow-y: auto; padding: 16px 18px;
+    font-size: 12px; color: #c9d1d9; line-height: 1.7;
+    white-space: pre-wrap; word-break: break-word;
+}
+#tv-modal-body::-webkit-scrollbar { width: 4px; }
+#tv-modal-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+#tv-modal-findings {
+    margin-top: 12px; border-top: 1px solid #30363d;
+    padding-top: 10px;
+}
+.tv-finding-item {
+    padding: 6px 8px; margin-bottom: 4px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; cursor: pointer; transition: border-color 0.12s;
+    display: flex; align-items: flex-start; gap: 8px;
+}
+.tv-finding-item:hover { border-color: #58a6ff; }
+.tv-finding-icon { font-size: 13px; flex-shrink: 0; }
+.tv-finding-info { flex: 1; }
+.tv-finding-type { font-size: 11px; color: #58a6ff; font-weight: 600; }
+.tv-finding-desc { font-size: 11px; color: #8b949e; margin-top: 1px; }
+.tv-finding-loc  { font-size: 10px; color: #484f58; margin-top: 1px; }
+
+/* ── Water Level Panel ───────────────────────────────────────────────────── */
+#wl-panel {
+    position: fixed;
+    top: 16px; right: 326px;
+    width: 186px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    z-index: 9999;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.75);
+    font-family: -apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+}
+#wl-hdr {
+    padding: 9px 14px 8px;
+    background: #0d1117;
+    border-bottom: 1px solid #30363d;
+    border-radius: 8px 8px 0 0;
+    display: flex; align-items: center; justify-content: space-between;
+}
+#wl-hdr-title { font-size: 12px; font-weight: 700; color: #58a6ff; }
+#wl-all-btn {
+    font-size: 10px; color: #8b949e;
+    background: none; border: none; cursor: pointer; padding: 0;
+}
+#wl-all-btn:hover { color: #58a6ff; }
+#wl-items { padding: 4px 0; }
+.wl-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px; cursor: pointer;
+    transition: background 0.1s;
+}
+.wl-item:hover { background: #21262d; }
+.wl-item input[type=checkbox] {
+    width: 14px; height: 14px; cursor: pointer;
+    accent-color: #58a6ff; flex-shrink: 0;
+}
+.wl-dash { width: 22px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+.wl-lbl { font-size: 12px; flex: 1; font-family: 'SFMono-Regular',Consolas,monospace; color: #c9d1d9; }
+.wl-st  { font-size: 9px; color: #484f58; min-width: 14px; text-align: right; }
+.wl-st.ok { color: #3fb950; }
+.wl-st.ld { color: #58a6ff; }
+.wl-st.er { color: #f85149; }
+#wl-fly {
+    display: block; width: 100%; padding: 8px 0;
+    background: #1a3a5c; border: none; border-top: 1px solid #30363d;
+    color: #58a6ff; font-size: 11px; cursor: pointer;
+    border-radius: 0 0 8px 8px; transition: background 0.12s;
+}
+#wl-fly:hover { background: #1f6feb; color: #fff; }
+
+/* ── Pro Panel（右侧专业模式） ───────────────────────────────────────────────── */
+#pro-panel {
+    position: fixed; top: 0; right: 0;
+    width: 310px; height: 100vh;
+    background: #161b22;
+    border-left: 1px solid #30363d;
+    display: flex; flex-direction: column;
+    z-index: 1000; overflow-y: auto; overflow-x: hidden;
+}
+#pro-panel::-webkit-scrollbar { width: 4px; }
+#pro-panel::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+.pp-header {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid #30363d; flex-shrink: 0;
+}
+.pp-title {
+    font-size: 14px; font-weight: 700; color: #f0883e;
+    letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px;
+}
+.pp-subtitle { font-size: 11px; color: #8b949e; margin-top: 3px; }
+.pp-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid #30363d; flex-shrink: 0;
+}
+.pp-sec-label {
+    font-size: 10px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
+}
+.pp-tabs { display: flex; gap: 4px; }
+.pp-tab {
+    flex: 1; padding: 6px 0;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #8b949e;
+    font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.pp-tab:hover { border-color: #58a6ff; color: #58a6ff; }
+.pp-tab.active { border-color: #f0883e; color: #f0883e; background: rgba(240,136,62,0.08); }
+.pp-draw-hint {
+    margin-top: 8px; padding: 6px 10px;
+    background: rgba(88,166,255,0.08); border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 4px; font-size: 11px; color: #58a6ff; line-height: 1.4;
+}
+.pp-bounds-info {
+    margin-top: 6px; display: none;
+    align-items: center; gap: 6px;
+}
+.pp-bounds-info.show { display: flex; }
+#pp-bounds-text {
+    flex: 1; font-size: 10px; color: #8b949e;
+    font-family: 'SFMono-Regular', Consolas, monospace; word-break: break-all;
+}
+#pp-clear-draw {
+    padding: 3px 7px;
+    border: 1px solid #30363d; border-radius: 4px;
+    background: transparent; color: #8b949e;
+    font-size: 11px; cursor: pointer; flex-shrink: 0;
+}
+#pp-clear-draw:hover { border-color: #f85149; color: #f85149; }
+.pp-type-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.pp-type-btn {
+    padding: 10px 6px; background: #0d1117;
+    border: 1px solid #30363d; border-radius: 8px;
+    cursor: pointer; text-align: center; transition: all 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 11px; color: #8b949e; user-select: none;
+}
+.pp-type-btn:hover { border-color: #58a6ff; color: #c9d1d9; }
+.pp-type-btn.active { border-color: #f0883e; color: #f0883e; background: rgba(240,136,62,0.08); }
+.pp-type-icon { font-size: 18px; line-height: 1; }
+#pp-custom-wrap { margin-top: 8px; display: none; }
+#pp-custom-wrap.show { display: block; }
+#pp-custom-input {
+    width: 100%; padding: 8px 10px;
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 12px; outline: none;
+    transition: border-color 0.15s;
+}
+#pp-custom-input:focus { border-color: #f0883e; }
+#pp-custom-input::placeholder { color: #484f58; }
+.pp-actions { display: flex; gap: 6px; }
+#pp-start-btn {
+    flex: 1; padding: 9px 0;
+    border: none; border-radius: 6px;
+    background: #9a3e00; color: #fff;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+}
+#pp-start-btn:hover:not(:disabled) { opacity: 0.85; }
+#pp-start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+#pp-clear-btn {
+    padding: 9px 12px;
+    background: transparent; border: 1px solid #30363d; border-radius: 6px;
+    color: #8b949e; font-size: 12px; cursor: pointer; transition: all 0.15s;
+}
+#pp-clear-btn:hover { border-color: #f85149; color: #f85149; }
+#pp-status {
+    padding: 6px 16px 4px; flex-shrink: 0;
+    font-size: 11px; color: #f0883e; min-height: 20px;
+    border-bottom: 1px solid #30363d;
+}
+.pp-log-hdr {
+    padding: 6px 16px 3px; font-size: 10px; color: #8b949e;
+    text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0;
+}
+#pp-log {
+    height: 170px; overflow-y: auto; flex-shrink: 0;
+    padding: 4px 16px 8px;
+    font-size: 11px; line-height: 1.65;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    border-bottom: 1px solid #30363d;
+}
+#pp-log::-webkit-scrollbar { width: 4px; }
+#pp-log::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+.pp-log-row { display: flex; gap: 6px; padding: 1px 0; }
+.pp-log-time { color: #484f58; flex-shrink: 0; }
+.pp-log-msg  { color: #8b949e; word-break: break-all; }
+.pp-log-msg.done { color: #3fb950; }
+.pp-log-msg.err  { color: #f85149; }
+#pp-result {
+    padding: 10px 16px; flex-shrink: 0; display: none;
+}
+#pp-result.show { display: block; }
+.pp-result-lbl { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
+#pp-result-text { font-size: 12px; color: #3fb950; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
+<div id="sidebar">
+
+  <div class="s-header">
+    <div class="s-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      地图智能分析系统
+    </div>
+    <div class="s-subtitle">Top-Down Progressive Refinement · 高德卫星影像</div>
+  </div>
+
+  <div class="s-search">
+    <div class="input-label">🔍 搜索定位</div>
+    <div id="search-wrap">
+      <input id="search-input" type="text" placeholder="输入地名、地址、景点…" autocomplete="off">
+      <button id="search-btn">定位</button>
+    </div>
+  </div><!-- /.s-search -->
+
+  <div class="s-control">
+    <div class="input-label">分析目标</div>
+    <input id="target-input" type="text"
+           placeholder="例如：违规建筑、非法采矿区、临时搭建物"
+           autocomplete="off">
+    <div class="btn-row">
+      <button id="start-btn" class="btn">▶ 启动分析</button>
+      <button id="stop-btn"  class="btn">■ 停止</button>
+    </div>
+  </div>
+
+  <!-- ── 视口信息面板 ──────────────────────────────────────────────────────── -->
+  <div class="s-info">
+    <div class="s-info-title">视口信息</div>
+    <div class="info-meta">
+      <div class="info-chip">缩放&nbsp;<span class="info-chip-val" id="info-zoom">—</span></div>
+      <div class="info-chip">瓦片&nbsp;<span class="info-chip-val" id="info-tiles">—</span></div>
+    </div>
+    <div class="info-region-row">区域&nbsp;<span id="info-region">—</span></div>
+    <div class="corners-wrap">
+      <div class="corner-item">
+        <span class="corner-dir">NW</span>
+        <span class="corner-val" id="ic-nw">—</span>
+      </div>
+      <div class="corner-item">
+        <span class="corner-dir">NE</span>
+        <span class="corner-val" id="ic-ne">—</span>
+      </div>
+      <div class="corner-item">
+        <span class="corner-dir">SW</span>
+        <span class="corner-val" id="ic-sw">—</span>
+      </div>
+      <div class="corner-item">
+        <span class="corner-dir">SE</span>
+        <span class="corner-val" id="ic-se">—</span>
+      </div>
+    </div>
+    <div class="info-note">CGCS2000（GCJ-02→WGS-84）· 十进制度</div>
+  </div>
+
+  <div class="s-measure">
+    <div class="s-measure-title">精准测量（手动画线）</div>
+    <div class="measure-btns">
+      <button class="measure-btn" id="btn-dist">📏 测距</button>
+      <button class="measure-btn" id="btn-area">⬡ 测面积</button>
+    </div>
+    <button id="measure-clear">✕ 清除测量</button>
+  </div>
+
+  <!-- ── 区域遍历分析 ─────────────────────────────────────────────────────── -->
+  <div class="s-traverse">
+    <div class="s-traverse-title">🗺️ 区域遍历分析</div>
+    <div class="traverse-row">
+      <button id="tv-draw-btn">✏️ 框选区域</button>
+      <button id="tv-clear-btn">✕</button>
+    </div>
+    <div id="tv-bounds-info">
+      <span>N</span> <span id="tv-n">—</span>  <span>S</span> <span id="tv-s">—</span>
+      <span>E</span> <span id="tv-e">—</span>  <span>W</span> <span id="tv-w">—</span>
+    </div>
+    <div class="tv-zoom-row">
+      <span class="tv-zoom-lbl">缩放级别</span>
+      <select id="tv-zoom">
+        <option value="15">15 — 约 940m×700m / 格</option>
+        <option value="16">16 — 约 470m×350m / 格</option>
+        <option value="17" selected>17 — 约 235m×175m / 格（单体建筑）</option>
+        <option value="18">18 — 约 118m×88m / 格（极细节）</option>
+      </select>
+      <span id="tv-tile-est">—格</span>
+    </div>
+    <div class="tv-zoom-row">
+      <span class="tv-zoom-lbl">水位过滤</span>
+      <select id="tv-wl-filter">
+        <option value="">不限制（全区域）</option>
+        <option value="155">155.0 m 淹没区以内</option>
+        <option value="156">156.0 m 淹没区以内</option>
+        <option value="157">157.0 m 淹没区以内</option>
+        <option value="157d5">157.5 m 淹没区以内</option>
+        <option value="158d5">158.5 m 淹没区以内</option>
+        <option value="160">160.0 m 淹没区以内</option>
+      </select>
+    </div>
+    <div id="tv-wl-hint" style="display:none">
+      ⚠ "淹没区以内"指该水位线<strong>封闭多边形内部</strong>（水面覆盖范围），不包含外侧陆地区域
+    </div>
+    <input id="tv-prompt" type="text"
+           placeholder="识别目标，如：违规建筑、临时搭建物、养殖大棚…"
+           autocomplete="off">
+    <div class="traverse-btns">
+      <button id="tv-start-btn">▶ 开始遍历</button>
+      <button id="tv-stop-btn">■ 停止</button>
+    </div>
+    <div id="tv-progress-bar"><div id="tv-progress-fill"></div></div>
+    <div id="tv-progress-txt"></div>
+    <button id="tv-reopen-btn">📊 查看上次报告</button>
+  </div>
+
+  <div class="s-analyze">
+    <div class="s-analyze-title">视野分析</div>
+    <input id="analyze-input" type="text"
+           placeholder="例：视野中主干道多长？绿地面积大吗？"
+           autocomplete="off">
+    <button id="analyze-btn" class="btn">⬡ 分析当前视野</button>
+    <div id="analyze-result"></div>
+  </div>
+
+  <div id="status-bar">
+    <div class="dot" id="status-dot"></div>
+    <span id="status-text">就绪 — 在地图上定位目标区域后点击启动</span>
+  </div>
+
+  <div id="log"></div>
+
+  <div class="s-preview">
+    <div class="s-section-title">最新截图</div>
+    <div id="preview-wrap">
+      <span id="preview-placeholder">截图将在分析时显示</span>
+      <img id="preview-img" alt="map screenshot">
+      <span id="step-badge"></span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Map ─────────────────────────────────────────────────────────────────── -->
+<div id="map"></div>
+<div id="search-dropdown"></div>
+
+<!-- ── 右侧专业模式面板 ────────────────────────────────────────────────────── -->
+<div id="pro-panel">
+  <div class="pp-header">
+    <div class="pp-title">🛰️ 专业模式</div>
+    <div class="pp-subtitle">AI Earth 遥感精准提取 · 地物智能识别</div>
+  </div>
+
+  <!-- 提取范围 -->
+  <div class="pp-section">
+    <div class="pp-sec-label">提取范围</div>
+    <div class="pp-tabs">
+      <button class="pp-tab active" data-area="viewport">当前视野</button>
+      <button class="pp-tab" data-area="rect">框选范围</button>
+      <button class="pp-tab" data-area="poly">绘制区域</button>
+    </div>
+    <div id="pp-draw-hint" class="pp-draw-hint" style="display:none">
+      在地图上拖拽框选目标区域
+    </div>
+    <div id="pp-bounds-info" class="pp-bounds-info">
+      <span id="pp-bounds-text"></span>
+      <button id="pp-clear-draw">✕</button>
+    </div>
+  </div>
+
+  <!-- 提取类型 -->
+  <div class="pp-section">
+    <div class="pp-sec-label">提取类型</div>
+    <div class="pp-type-grid">
+      <div class="pp-type-btn active" data-type="building">
+        <span class="pp-type-icon">🏘️</span>
+        <span>建筑物</span>
+      </div>
+      <div class="pp-type-btn" data-type="road">
+        <span class="pp-type-icon">🛣️</span>
+        <span>路网地物</span>
+      </div>
+      <div class="pp-type-btn" data-type="dam">
+        <span class="pp-type-icon">💧</span>
+        <span>拦河坝</span>
+      </div>
+      <div class="pp-type-btn" data-type="custom">
+        <span class="pp-type-icon">✏️</span>
+        <span>自定义目标</span>
+      </div>
+    </div>
+    <div id="pp-custom-wrap">
+      <input id="pp-custom-input" type="text"
+             placeholder="输入目标，如：光伏板、储水池、油罐…"
+             autocomplete="off">
+    </div>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="pp-section">
+    <div class="pp-actions">
+      <button id="pp-start-btn">▶ 开始提取</button>
+      <button id="pp-clear-btn">✕ 清除</button>
+    </div>
+  </div>
+
+  <!-- 状态行 -->
+  <div id="pp-status"></div>
+
+  <!-- 运行日志 -->
+  <div class="pp-log-hdr">运行日志</div>
+  <div id="pp-log"></div>
+
+  <!-- 提取结果汇总 -->
+  <div id="pp-result">
+    <div class="pp-result-lbl">提取结果</div>
+    <div id="pp-result-text"></div>
+  </div>
+</div>
+
+<!-- ── 水位线浮动面板（地图右上角） ───────────────────────────────────────── -->
+<div id="wl-panel">
+  <div id="wl-hdr">
+    <span id="wl-hdr-title">💧 水位线图层</span>
+    <button id="wl-all-btn">全选</button>
+  </div>
+  <div id="wl-items"></div>
+  <button id="wl-fly">📍 定位密云水库</button>
+</div>
+
+<!-- ── 遍历分析汇总弹窗 ────────────────────────────────────────────────────── -->
+<div id="tv-modal">
+  <div id="tv-modal-box">
+    <div id="tv-modal-hdr">
+      <span id="tv-modal-title">📊 遍历分析报告</span>
+      <button id="tv-modal-close">✕</button>
+    </div>
+    <div id="tv-modal-body">
+      <div id="tv-modal-summary"></div>
+      <div id="tv-modal-findings"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── AI 浮动对话面板 ─────────────────────────────────────────────────────── -->
+<div id="chat-panel">
+  <div id="cp-header">
+    <div>
+      <div id="cp-title">💬 AI 地图对话</div>
+      <div id="cp-subtitle">自动截取当前地图视图供 AI 参考</div>
+    </div>
+    <button id="cp-clear">清空</button>
+  </div>
+  <div id="cp-msgs"></div>
+  <div id="cp-foot">
+    <input id="cp-input" type="text" placeholder="输入问题，Enter 发送…" autocomplete="off">
+    <button id="cp-send">发送</button>
+  </div>
+</div>
+<button id="chat-fab" title="AI 对话">💬</button>
+
+<!-- ── Scripts ────────────────────────────────────────────────────────────── -->
+<script>
+/* __AMAP_SECURITY__ */
+
+let map               = null;
+let markers           = [];
+let overlays          = [];
+let measureLines      = [];
+let eventSource       = null;
+let isRunning         = false;
+let mouseTool         = null;
+let measureMode       = null;
+let geocoder          = null;
+let searchGeocoder    = null;
+let _searchMarker     = null;
+let screenshotPreview = null;
+let _geocodeTimer     = null;
+let autoComplete      = null;
+let _acTimer          = null;
+let nearbyPois        = '';   // 当前视野附近的地名/POI 列表
+const HISTORY_KEY     = 'map_agent_search_history';
+const MAX_HISTORY     = 12;
+let searchHistory     = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+
+// ── 水位线图层 ─────────────────────────────────────────────────────────────────
+const WL_LEVELS = [
+    { name: '155',   label: '155.0 m', color: '#4fc3f7' },
+    { name: '156',   label: '156.0 m', color: '#29b6f6' },
+    { name: '157',   label: '157.0 m', color: '#039be5' },
+    { name: '157d5', label: '157.5 m', color: '#0277bd' },
+    { name: '158d5', label: '158.5 m', color: '#01579b' },
+    { name: '160',   label: '160.0 m', color: '#c62828' },
+];
+const _wlCache = {};   // name → Promise<AMap.Polyline[]>
+
+function _wlColor(name) {
+    return WL_LEVELS.find(l => l.name === name)?.color || '#58a6ff';
+}
+
+// 返回当前已勾选的水位层信息（供 AI 截图使用）
+function _activeWLLayers() {
+    return WL_LEVELS.filter(lv => {
+        const cb = document.getElementById(`wl-cb-${lv.name}`);
+        return cb && cb.checked;
+    }).map(lv => ({ name: lv.name, color: lv.color, label: lv.label }));
+}
+
+async function _loadWLLayer(name) {
+    const st = document.getElementById(`wl-st-${name}`);
+    if (st) { st.textContent = '…'; st.className = 'wl-st ld'; }
+    const resp = await fetch(`/api/water-level/${name}`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const gj    = await resp.json();
+    const color = _wlColor(name);
+    const lines = [];
+    for (const feat of gj.features) {
+        // 每个环单独一条 Polyline —— 避免多环合并成 Polygon 时产生连接直线
+        for (const ring of feat.geometry.coordinates) {
+            const path = ring.map(([lng, lat]) => [lng, lat]);
+            const line = new AMap.Polyline({
+                path,
+                strokeColor:   color,
+                strokeWeight:  2.5,
+                strokeOpacity: 0.9,
+                strokeStyle:   'solid',
+                zIndex:        50,
+                bubble:        true,
+                zooms:         [2, 20],  // 任何缩放级别均可见
+            });
+            map.add(line);
+            line.hide();
+            lines.push(line);
+        }
+    }
+    if (st) { st.textContent = '✓'; st.className = 'wl-st ok'; }
+    return lines;
+}
+
+function _ensureWL(name) {
+    if (!_wlCache[name]) {
+        _wlCache[name] = _loadWLLayer(name).catch(err => {
+            console.error('水位线加载失败', name, err);
+            const st = document.getElementById(`wl-st-${name}`);
+            if (st) { st.textContent = '✗'; st.className = 'wl-st er'; }
+            delete _wlCache[name];
+            return [];
+        });
+    }
+    return _wlCache[name];
+}
+
+async function toggleWL(name, visible) {
+    const lines = await _ensureWL(name);
+    lines.forEach(l => visible ? l.show() : l.hide());
+}
+
+function _buildWLPanel() {
+    const container = document.getElementById('wl-items');
+    if (!container) { console.error('wl-items not found'); return; }
+    container.innerHTML = '';
+    WL_LEVELS.forEach(lv => {
+        const item = document.createElement('label');
+        item.className = 'wl-item';
+        item.innerHTML =
+            `<input type="checkbox" id="wl-cb-${lv.name}" data-wl="${lv.name}">` +
+            `<span class="wl-dash" style="background:${lv.color}"></span>` +
+            `<span class="wl-lbl">${lv.label}</span>` +
+            `<span class="wl-st" id="wl-st-${lv.name}">—</span>`;
+        item.querySelector('input').addEventListener('change', function () {
+            toggleWL(this.dataset.wl, this.checked);
+        });
+        container.appendChild(item);
+    });
+    document.getElementById('wl-all-btn').addEventListener('click', function () {
+        const cbs = container.querySelectorAll('input[type=checkbox]');
+        const anyOff = [...cbs].some(c => !c.checked);
+        cbs.forEach(c => { c.checked = anyOff; toggleWL(c.dataset.wl, anyOff); });
+        this.textContent = anyOff ? '全隐' : '全选';
+    });
+    document.getElementById('wl-fly').addEventListener('click', function () {
+        if (map) map.setZoomAndCenter(11, [116.909, 40.518]);
+        const cbs = container.querySelectorAll('input[type=checkbox]');
+        cbs.forEach(c => { c.checked = true; toggleWL(c.dataset.wl, true); });
+        document.getElementById('wl-all-btn').textContent = '全隐';
+    });
+}
+_buildWLPanel();
+
+// ── GCJ-02 → WGS-84 (≈ CGCS2000，差异 < 1mm) ──────────────────────────────
+function _transformLat(x, y) {
+    let r = -100 + 2*x + 3*y + 0.2*y*y + 0.1*x*y + 0.2*Math.sqrt(Math.abs(x));
+    r += (20*Math.sin(6*x*Math.PI) + 20*Math.sin(2*x*Math.PI)) * 2/3;
+    r += (20*Math.sin(y*Math.PI)   + 40*Math.sin(y/3*Math.PI)) * 2/3;
+    r += (160*Math.sin(y/12*Math.PI) + 320*Math.sin(y/30*Math.PI)) * 2/3;
+    return r;
+}
+function _transformLng(x, y) {
+    let r = 300 + x + 2*y + 0.1*x*x + 0.1*x*y + 0.1*Math.sqrt(Math.abs(x));
+    r += (20*Math.sin(6*x*Math.PI) + 20*Math.sin(2*x*Math.PI)) * 2/3;
+    r += (20*Math.sin(x*Math.PI)   + 40*Math.sin(x/3*Math.PI)) * 2/3;
+    r += (150*Math.sin(x/12*Math.PI) + 300*Math.sin(x/30*Math.PI)) * 2/3;
+    return r;
+}
+function gcj02ToWgs84(lng, lat) {
+    const a = 6378245.0, ee = 0.00669342162296594323;
+    let dlat = _transformLat(lng - 105, lat - 35);
+    let dlng = _transformLng(lng - 105, lat - 35);
+    const rad = lat / 180 * Math.PI;
+    let magic = Math.sin(rad);
+    magic = 1 - ee * magic * magic;
+    const sq = Math.sqrt(magic);
+    dlat = dlat * 180 / ((a*(1-ee)) / (magic*sq) * Math.PI);
+    dlng = dlng * 180 / (a / sq * Math.cos(rad) * Math.PI);
+    return [+(lng - dlng).toFixed(6), +(lat - dlat).toFixed(6)];
+}
+
+// 格式化单个角坐标为两行显示
+function _fmtCorner(lat, lng) {
+    const la = Math.abs(lat).toFixed(6) + '°' + (lat >= 0 ? 'N' : 'S');
+    const lo = Math.abs(lng).toFixed(6) + '°' + (lng >= 0 ? 'E' : 'W');
+    return la + '\n' + lo;
+}
+
+// ── 高德地图初始化 ─────────────────────────────────────────────────────────────
+function _onAMapReady() {
+    map = new AMap.Map('map', {
+        center:          [116.909, 40.518],   // 密云水库中心
+        zoom:            11,
+        layers:          [new AMap.TileLayer.Satellite()],
+        resizeEnable:    true,
+        doubleClickZoom: true,
+    });
+
+    AMap.plugin(['AMap.MouseTool', 'AMap.Geocoder', 'AMap.AutoComplete'], function () {
+        mouseTool = new AMap.MouseTool(map);
+        mouseTool.on('draw', function () {
+            document.querySelectorAll('.measure-btn').forEach(b => b.classList.remove('active'));
+            measureMode = null;
+        });
+        geocoder = new AMap.Geocoder({ radius: 3000 });
+        searchGeocoder = new AMap.Geocoder({ city: '全国' });
+        autoComplete = new AMap.AutoComplete({ city: '全国' });
+        scheduleRegionUpdate();
+    });
+
+    // 实时更新截图预览框（地图拖动/缩放时高频触发）
+    map.on('mapmove',   updateScreenshotPreview);
+    map.on('zoomchange', updateScreenshotPreview);
+
+    // 移动/缩放结束后刷新完整信息面板
+    map.on('moveend', function () { updateViewportInfo(); scheduleRegionUpdate(); });
+    map.on('zoomend', function () { updateViewportInfo(); scheduleRegionUpdate(); });
+
+    map.on('complete', function () {
+        updateViewportInfo();
+        updateScreenshotPreview();
+        // 地图就绪后后台预加载水位线（不阻塞主流程）
+        WL_LEVELS.forEach(lv => _ensureWL(lv.name));
+        setTimeout(() => {
+            // 默认显示 160m 水位线
+            const cb160 = document.getElementById('wl-cb-160');
+            if (cb160) { cb160.checked = true; toggleWL('160', true); }
+            document.getElementById('wl-all-btn').textContent = '全隐';
+        }, 1500);
+    });
+
+    // AMap v2 双击放大（v2 默认行为不可靠，手动绑定）
+    map.on('dblclick', function (e) {
+        map.setZoomAndCenter(map.getZoom() + 1, e.lnglat, false, 250);
+        e.originEvent && e.originEvent.preventDefault();
+    });
+}
+
+// ── 更新视口信息面板 ────────────────────────────────────────────────────────────
+function updateViewportInfo() {
+    if (!map) return;
+
+    // 缩放级别
+    document.getElementById('info-zoom').textContent = Math.round(map.getZoom());
+
+    // 可见瓦片数量（视口像素 / 256px 标准瓦片）
+    const size = map.getSize();
+    const cols = Math.ceil(size.width  / 256);
+    const rows = Math.ceil(size.height / 256);
+    document.getElementById('info-tiles').textContent = cols + '×' + rows + '=' + (cols * rows);
+
+    // 四角坐标（GCJ-02 → WGS-84 ≈ CGCS2000）
+    const bounds = map.getBounds();
+    const ne = bounds.getNorthEast();   // 东北角
+    const sw = bounds.getSouthWest();   // 西南角
+    const [neLng, neLat] = gcj02ToWgs84(ne.getLng(), ne.getLat());
+    const [swLng, swLat] = gcj02ToWgs84(sw.getLng(), sw.getLat());
+
+    document.getElementById('ic-nw').textContent = _fmtCorner(neLat, swLng);
+    document.getElementById('ic-ne').textContent = _fmtCorner(neLat, neLng);
+    document.getElementById('ic-sw').textContent = _fmtCorner(swLat, swLng);
+    document.getElementById('ic-se').textContent = _fmtCorner(swLat, neLng);
+}
+
+// ── 区域名称（反向地理编码，防抖 1.5s） ─────────────────────────────────────────
+function scheduleRegionUpdate() {
+    clearTimeout(_geocodeTimer);
+    _geocodeTimer = setTimeout(updateRegionName, 1500);
+}
+
+function updateRegionName() {
+    if (!geocoder || !map) return;
+    const c = map.getCenter();
+    geocoder.getAddress([c.getLng(), c.getLat()], function (status, result) {
+        if (status === 'complete' && result.regeocode) {
+            const addr = result.regeocode.addressComponent;
+            const parts = [];
+            if (addr.province) parts.push(addr.province);
+            if (addr.city && addr.city !== addr.province) parts.push(addr.city);
+            if (addr.district) parts.push(addr.district);
+            if (addr.township) parts.push(addr.township);
+            const name = parts.length ? parts.join(' ') : result.regeocode.formattedAddress;
+            document.getElementById('info-region').textContent = name || '—';
+
+            // 提取周边 POI / AOI 名称供 AI 参考
+            const features = [];
+            (result.regeocode.pois || []).slice(0, 8).forEach(p => {
+                if (p.name) {
+                    const typeShort = (p.type || '').split(';')[0];
+                    features.push(typeShort ? `${p.name}(${typeShort})` : p.name);
+                }
+            });
+            (result.regeocode.aois || []).slice(0, 5).forEach(a => {
+                if (a.name && !features.some(f => f.startsWith(a.name))) {
+                    features.push(a.name);
+                }
+            });
+            nearbyPois = features.join('、');
+        } else {
+            document.getElementById('info-region').textContent = '—';
+            nearbyPois = '';
+        }
+    });
+}
+
+// ── 更新截图预览框（实时显示 1024×768 截图将覆盖的地理范围） ──────────────────
+function updateScreenshotPreview() {
+    if (!map) return;
+    const bounds = map.getBounds();
+    const center = map.getCenter();
+    const size   = map.getSize();
+    if (!size || size.width === 0 || size.height === 0) return;
+
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+    // 将当前视口经纬跨度按 1024×768 与实际视口像素的比例缩放
+    const lngSpan = (ne.getLng() - sw.getLng()) * 1024 / size.width;
+    const latSpan = (ne.getLat() - sw.getLat()) * 768  / size.height;
+
+    const north = center.getLat() + latSpan / 2;
+    const south = center.getLat() - latSpan / 2;
+    const east  = center.getLng() + lngSpan / 2;
+    const west  = center.getLng() - lngSpan / 2;
+
+    const path = [[west, north], [east, north], [east, south], [west, south]];
+
+    if (screenshotPreview) {
+        screenshotPreview.setPath(path);
+    } else {
+        screenshotPreview = new AMap.Polygon({
+            path,
+            strokeColor:   '#f0c040',
+            strokeWeight:  2,
+            strokeOpacity: 0.85,
+            strokeStyle:   'dashed',
+            fillColor:     '#f0c040',
+            fillOpacity:   0.04,
+            zIndex:        30,
+            bubble:        true,    // 必须穿透，否则会屏蔽地图双击缩放
+        });
+        map.add(screenshotPreview);
+    }
+}
+
+// ── UI 控制 ────────────────────────────────────────────────────────────────────
+document.getElementById('start-btn').addEventListener('click', startAnalysis);
+document.getElementById('stop-btn').addEventListener('click',  stopAnalysis);
+document.getElementById('analyze-btn').addEventListener('click', startAnalyze);
+document.getElementById('btn-dist').addEventListener('click',  () => startMeasure('dist'));
+document.getElementById('btn-area').addEventListener('click',  () => startMeasure('area'));
+document.getElementById('measure-clear').addEventListener('click', clearMeasure);
+
+function setRunning(running) {
+    isRunning = running;
+    document.getElementById('start-btn').style.display = running ? 'none' : '';
+    document.getElementById('stop-btn').style.display  = running ? ''     : 'none';
+    document.getElementById('analyze-btn').disabled    = running;
+    const dot  = document.getElementById('status-dot');
+    dot.className = 'dot' + (running ? ' running' : '');
+}
+
+function setStatus(msg, type) {
+    document.getElementById('status-text').textContent = msg;
+    const dot = document.getElementById('status-dot');
+    dot.className = 'dot' + (type === 'run' ? ' running' : type === 'err' ? ' error' : '');
+}
+
+// ── 启动搜索分析 ────────────────────────────────────────────────────────────────
+async function startAnalysis() {
+    const target = document.getElementById('target-input').value.trim();
+    if (!target)  { alert('请输入分析目标');      return; }
+    if (!map)     { alert('地图尚未就绪，请稍候'); return; }
+
+    map.remove(markers);
+    map.remove(overlays);
+    map.remove(measureLines);
+    markers = []; overlays = []; measureLines = [];
+    document.getElementById('log').innerHTML = '';
+    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('preview-placeholder').style.display = '';
+    document.getElementById('step-badge').style.display = 'none';
+
+    setRunning(true);
+    setStatus('分析中…', 'run');
+
+    const center = map.getCenter();
+    const zoom   = Math.round(map.getZoom());
+    const bounds = map.getBounds();
+    const ne = bounds.getNorthEast(), sw = bounds.getSouthWest();
+
+    try {
+        const resp = await fetch('/api/start', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({
+                target,
+                lat:   center.getLat(),
+                lng:   center.getLng(),
+                zoom,
+                mode:  'search',
+                north: ne.getLat(),
+                south: sw.getLat(),
+                east:  ne.getLng(),
+                west:  sw.getLng(),
+                region:      document.getElementById('info-region').textContent || '',
+                nearby_pois: nearbyPois,
+                active_wl:   _activeWLLayers(),
+            })
+        });
+        const { session_id } = await resp.json();
+        if (eventSource) eventSource.close();
+        eventSource = new EventSource(`/api/stream/${session_id}`);
+        eventSource.onmessage = handleEvent;
+        eventSource.onerror   = () => {
+            appendLog('连接中断', 'err');
+            setStatus('连接中断', 'err');
+            setRunning(false);
+        };
+    } catch (err) {
+        appendLog('启动失败：' + err.message, 'err');
+        setStatus('启动失败', 'err');
+        setRunning(false);
+    }
+}
+
+function stopAnalysis() {
+    if (eventSource) { eventSource.close(); eventSource = null; }
+    setRunning(false);
+    setStatus('已停止', '');
+    appendLog('用户手动停止', '');
+}
+
+// ── 精准测量工具 ────────────────────────────────────────────────────────────────
+function startMeasure(mode) {
+    if (!mouseTool) { alert('地图尚未就绪，请稍候'); return; }
+
+    if (measureMode === mode) {
+        mouseTool.close(false);
+        measureMode = null;
+        document.querySelectorAll('.measure-btn').forEach(b => b.classList.remove('active'));
+        return;
+    }
+
+    mouseTool.close(false);
+    measureMode = mode;
+    document.querySelectorAll('.measure-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(mode === 'dist' ? 'btn-dist' : 'btn-area').classList.add('active');
+
+    if (mode === 'dist') {
+        mouseTool.rule({
+            strokeColor:   '#00e5ff',
+            strokeWeight:  2,
+            strokeStyle:   'dashed',
+        });
+    } else {
+        mouseTool.measureArea({
+            strokeColor:   '#3fb950',
+            strokeWeight:  2,
+            fillColor:     'rgba(63,185,80,0.1)',
+        });
+    }
+}
+
+function clearMeasure() {
+    if (mouseTool) mouseTool.close(true);
+    measureMode = null;
+    document.querySelectorAll('.measure-btn').forEach(b => b.classList.remove('active'));
+}
+
+// ── 视野分析 ────────────────────────────────────────────────────────────────────
+async function startAnalyze() {
+    const question = document.getElementById('analyze-input').value.trim();
+    if (!question) { alert('请输入分析问题'); return; }
+    if (!map)      { alert('地图尚未就绪');   return; }
+
+    map.remove(measureLines);
+    measureLines = [];
+    const resultBox = document.getElementById('analyze-result');
+    resultBox.style.display = 'none';
+    resultBox.textContent   = '';
+
+    setRunning(true);
+    setStatus('分析中…', 'run');
+
+    const center = map.getCenter();
+    const zoom   = Math.round(map.getZoom());
+
+    try {
+        const resp = await fetch('/api/start', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({
+                lat:      center.getLat(),
+                lng:      center.getLng(),
+                zoom:     zoom,
+                mode:     'analyze',
+                question: question,
+            })
+        });
+        const { session_id } = await resp.json();
+
+        if (eventSource) eventSource.close();
+        eventSource = new EventSource(`/api/stream/${session_id}`);
+        eventSource.onmessage = handleEvent;
+        eventSource.onerror   = () => {
+            appendLog('连接中断', 'err');
+            setStatus('连接中断', 'err');
+            setRunning(false);
+        };
+    } catch (err) {
+        appendLog('分析失败：' + err.message, 'err');
+        setStatus('分析失败', 'err');
+        setRunning(false);
+    }
+}
+
+// ── SSE 事件处理 ───────────────────────────────────────────────────────────────
+function handleEvent(e) {
+    const data = JSON.parse(e.data);
+
+    switch (data.type) {
+
+        case 'log':
+            appendLog(data.message);
+            break;
+
+        case 'screenshot': {
+            const img = document.getElementById('preview-img');
+            img.src = 'data:image/png;base64,' + data.image;
+            img.style.display = '';
+            document.getElementById('preview-placeholder').style.display = 'none';
+            const badge = document.getElementById('step-badge');
+            badge.textContent  = `步骤 ${data.step}`;
+            badge.style.display = '';
+            break;
+        }
+
+        case 'annotated_screenshot': {
+            const img2 = document.getElementById('preview-img');
+            img2.src = 'data:image/png;base64,' + data.image;
+            img2.style.display = '';
+            document.getElementById('preview-placeholder').style.display = 'none';
+            document.getElementById('step-badge').textContent = '检测框标注（红框=模型预测位置）';
+            document.getElementById('step-badge').style.display = '';
+            break;
+        }
+
+        case 'set_zoom':
+            map.setZoom(data.zoom, false);
+            appendLog(`缩放 → ${data.zoom}`, 'action');
+            break;
+
+        case 'fly_to':
+            map.setZoomAndCenter(data.zoom, [data.lng, data.lat], false);
+            appendLog(
+                `移动 → [${data.lat.toFixed(5)}, ${data.lng.toFixed(5)}]  zoom=${data.zoom}`,
+                'action'
+            );
+            break;
+
+        case 'add_marker': {
+            if (!isFinite(data.lat) || !isFinite(data.lng)) {
+                appendLog(`[ERROR] 坐标无效，跳过: lat=${data.lat} lng=${data.lng}`, 'err');
+                break;
+            }
+            const pct = (data.confidence * 100).toFixed(0);
+            // anchor:'center' 使圆心精确落在坐标点，不受图标高度影响
+            const marker = new AMap.Marker({
+                position: new AMap.LngLat(data.lng, data.lat),
+                anchor:   'center',
+                content:  '<div style="width:14px;height:14px;background:#ff4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(255,68,68,0.7);cursor:pointer"></div>',
+                title:    data.description,
+                zIndex:   120
+            });
+            marker.setLabel({
+                content:   `<div class="marker-popup">${data.description}　${pct}%</div>`,
+                direction: 'right',
+                offset:    new AMap.Pixel(4, 0),
+            });
+            map.add(marker);
+            markers.push(marker);
+            appendLog(`标记：${data.description} (${pct}%)`, 'action');
+            break;
+        }
+
+        case 'add_rect': {
+            console.log('[DEBUG add_rect]', data.north, data.south, data.west, data.east);
+            const poly = new AMap.Polygon({
+                path: [
+                    [data.west,  data.north],
+                    [data.east,  data.north],
+                    [data.east,  data.south],
+                    [data.west,  data.south]
+                ],
+                strokeColor:   '#ff4444',
+                strokeWeight:  2,
+                strokeOpacity: 0.9,
+                fillColor:     '#ff4444',
+                fillOpacity:   0.12,
+                zIndex:        100
+            });
+            map.add(poly);
+            overlays.push(poly);
+            break;
+        }
+
+        case 'add_polyline': {
+            if (!data.latlngs || data.latlngs.length < 2) break;
+            const path = data.latlngs.map(([lat, lng]) => new AMap.LngLat(lng, lat));
+            const line = new AMap.Polyline({
+                path,
+                strokeColor:   '#00e5ff',
+                strokeWeight:  4,
+                strokeOpacity: 0.9,
+                lineJoin:      'round',
+                lineCap:       'round',
+                zIndex:        120,
+            });
+            map.add(line);
+            overlays.push(line);
+            appendLog(`🛣️ ${data.label || '道路'}：已标注（${data.latlngs.length} 个路径点）`, 'action');
+            break;
+        }
+
+        case 'analyze_result': {
+            const resultBox = document.getElementById('analyze-result');
+            resultBox.textContent   = data.answer || '';
+            resultBox.style.display = '';
+
+            for (const m of (data.measurements || [])) {
+                if (m.type === 'length' && m.latlngs && m.latlngs.length >= 2) {
+                    const path = m.latlngs.map(([lat, lng]) => new AMap.LngLat(lng, lat));
+                    const line = new AMap.Polyline({
+                        path,
+                        strokeColor:   '#00e5ff',
+                        strokeWeight:  3,
+                        strokeOpacity: 0.95,
+                        strokeStyle:   'dashed',
+                        zIndex:        120,
+                    });
+                    map.add(line);
+                    measureLines.push(line);
+                    const dist = m.km < 1
+                        ? `${(m.km * 1000).toFixed(0)} 米`
+                        : `${m.km.toFixed(3)} 公里`;
+                    appendLog(`📏 ${m.label || '测量'}：${dist}`, 'action');
+                }
+
+                if (m.type === 'count' && m.rects && m.rects.length > 0) {
+                    for (const r of m.rects) {
+                        const poly = new AMap.Polygon({
+                            path: [
+                                [r.west,  r.north],
+                                [r.east,  r.north],
+                                [r.east,  r.south],
+                                [r.west,  r.south],
+                            ],
+                            strokeColor:   '#ff9800',
+                            strokeWeight:  1.5,
+                            strokeOpacity: 0.9,
+                            fillColor:     '#ff9800',
+                            fillOpacity:   0.12,
+                            zIndex:        110,
+                        });
+                        map.add(poly);
+                        measureLines.push(poly);
+                    }
+                    appendLog(`🏠 ${m.label || '目标'}：共 ${m.count} 个`, 'action');
+                }
+            }
+            break;
+        }
+
+        case 'error':
+            appendLog('错误：' + data.message, 'err');
+            setStatus('发生错误', 'err');
+            setRunning(false);
+            if (eventSource) { eventSource.close(); eventSource = null; }
+            break;
+
+        case 'done':
+            appendLog('✓ 任务完成', 'done');
+            setStatus(`分析完成，共标记 ${markers.length} 个目标`, '');
+            setRunning(false);
+            if (eventSource) { eventSource.close(); eventSource = null; }
+            break;
+    }
+}
+
+// ── 日志追加 ───────────────────────────────────────────────────────────────────
+function appendLog(msg, type) {
+    const log  = document.getElementById('log');
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    item.innerHTML =
+        `<span class="log-time">${time}</span>` +
+        `<span class="log-msg ${type || ''}">${escHtml(msg)}</span>`;
+    log.appendChild(item);
+    log.scrollTop = log.scrollHeight;
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── 搜索历史 & 下拉 ─────────────────────────────────────────────────────────
+function saveHistory(q) {
+    if (!q) return;
+    searchHistory = [q, ...searchHistory.filter(h => h !== q)].slice(0, MAX_HISTORY);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(searchHistory));
+}
+function clearHistory() {
+    searchHistory = [];
+    localStorage.removeItem(HISTORY_KEY);
+    closeDropdown();
+}
+// ── 拼音首字母表 & 模糊匹配 ───────────────────────────────────────────────────
+const _PI = {};
+[
+  ['a', '啊阿哀哎唉挨爱碍安按暗岸案昂奥澳'],
+  ['b', '吧芭巴坝把百白摆拜搬半帮宝保报抱贝北备背被奔本比鼻边标别冰丙并波博不布步渤滨'],
+  ['c', '擦菜蚕仓藏草层差茶产长常超车陈程城赤冲出处川穿传窗春村丛昌'],
+  ['d', '大达打代带丹淡当岛道德灯低地电店甸定东洞都斗度断堆多垛'],
+  ['e', '鄂恩额峨鹅尔'],
+  ['f', '发法帆飞分丰逢佛福扶副富府番泛肥峰'],
+  ['g', '甘感港高葛格各弓公功贡沟姑鼓关管光广贵滚郭岗古谷'],
+  ['h', '哈海含寒汉杭好合和河黑洪红后壶湖虎花华怀黄灰回汇惠浑呼浩徽'],
+  ['j', '基吉积极济加甲尖间江将交焦角界节金京经井静旧巨举绝疆建街家'],
+  ['k', '卡开凯坎康库宽昆口克喀'],
+  ['l', '拉来兰狼浪老乐雷冷梨里离历利连林陵岭刘流龙陇楼路庐鹿洛泸鲁'],
+  ['m', '马麻买曼茂猫梅门蒙弥密面苗岷明名摩沫木牧'],
+  ['n', '那纳南难内宁农诺'],
+  ['o', '哦'],
+  ['p', '盆盘平坪普濮坡'],
+  ['q', '气齐棋秦青清泉群桥区'],
+  ['r', '然饶热仁人荣日'],
+  ['s', '萨三山陕上少绍深沈生圣石市寿蜀水顺松苏宿穗沙肃四'],
+  ['t', '塔台谭唐桃天田铁通图土太特吐'],
+  ['w', '洼湾万汪王威微文渭吴无武乌'],
+  ['x', '西峡仙湘香雪宣新忻邢徐喜夏县厦'],
+  ['y', '鸦哑延扬阳洋耀沂宜义阴迎银营永幽越云豫亚原伊'],
+  ['z', '泽扎章张赵浙镇正郑中周朱珠竹庄州壮'],
+].forEach(([k, v]) => v.split('').forEach(c => _PI[c] = k));
+
+function getInitials(str) {
+    return str.split('').map(c => _PI[c] || c.toLowerCase()[0] || '').join('');
+}
+function isSubsequence(query, target) {
+    let qi = 0;
+    for (let ti = 0; ti < target.length && qi < query.length; ti++) {
+        if (query[qi] === target[ti]) qi++;
+    }
+    return qi === query.length;
+}
+function positionDropdown() {
+    const rect = document.getElementById('search-wrap').getBoundingClientRect();
+    const dd   = document.getElementById('search-dropdown');
+    dd.style.top   = rect.bottom + 'px';
+    dd.style.left  = rect.left   + 'px';
+    dd.style.width = rect.width  + 'px';
+}
+function closeDropdown() {
+    document.getElementById('search-dropdown').classList.remove('open');
+}
+function showHistoryDropdown(filter) {
+    let items;
+    if (!filter) {
+        items = searchHistory.map(h => ({ text: h }));
+    } else {
+        const lq = filter.toLowerCase();
+        items = searchHistory
+            .map(h => {
+                const lh = h.toLowerCase();
+                const ini = getInitials(h);
+                let score = 0;
+                if (lh.includes(lq))            score = 3;  // 直接包含
+                else if (ini.includes(lq))       score = 2;  // 拼音首字母匹配
+                else if (isSubsequence(lq, lh))  score = 1;  // 模糊子序列
+                return { text: h, score };
+            })
+            .filter(i => i.score > 0)
+            .sort((a, b) => b.score - a.score);
+    }
+    const dd = document.getElementById('search-dropdown');
+    if (!items.length) { closeDropdown(); return; }
+    positionDropdown();
+    dd.innerHTML = '';
+
+    const sep = document.createElement('div');
+    sep.className = 'sdrop-sep';
+    const sepText = document.createElement('span');
+    sepText.textContent = '历史记录';
+    const clearBtn = document.createElement('button');
+    clearBtn.textContent = '清除全部';
+    clearBtn.addEventListener('click', e => { e.stopPropagation(); clearHistory(); });
+    sep.appendChild(sepText);
+    sep.appendChild(clearBtn);
+    dd.appendChild(sep);
+
+    items.forEach(({ text }) => {
+        const item = document.createElement('div');
+        item.className = 'sdrop-item';
+        const icon = document.createElement('span');
+        icon.className = 'sdrop-icon';
+        icon.textContent = '🕒';
+        const label = document.createElement('span');
+        label.textContent = text;
+        item.appendChild(icon);
+        item.appendChild(label);
+        item.addEventListener('click', () => {
+            document.getElementById('search-input').value = text;
+            closeDropdown();
+            doSearch();
+        });
+        dd.appendChild(item);
+    });
+    dd.classList.add('open');
+}
+function showCandidatesDropdown(geocodes) {
+    const dd = document.getElementById('search-dropdown');
+    positionDropdown();
+    dd.innerHTML = '';
+
+    const sep = document.createElement('div');
+    sep.className = 'sdrop-sep';
+    sep.textContent = `找到 ${geocodes.length} 个结果，请选择`;
+    dd.appendChild(sep);
+
+    geocodes.forEach(geo => {
+        const item = document.createElement('div');
+        item.className = 'sdrop-item';
+        const icon = document.createElement('span');
+        icon.className = 'sdrop-icon';
+        icon.textContent = '📍';
+        const info = document.createElement('div');
+        const nameDiv = document.createElement('div');
+        nameDiv.textContent = geo.formattedAddress || '未知地址';
+        info.appendChild(nameDiv);
+        if (geo.level) {
+            const sub = document.createElement('div');
+            sub.className = 'sdrop-sub';
+            sub.textContent = geo.level;
+            info.appendChild(sub);
+        }
+        item.appendChild(icon);
+        item.appendChild(info);
+        item.addEventListener('click', () => {
+            closeDropdown();
+            navigateToGeocode(geo);
+            saveHistory(document.getElementById('search-input').value.trim());
+        });
+        dd.appendChild(item);
+    });
+    dd.classList.add('open');
+}
+function showAutocompleteDropdown(tips) {
+    const dd = document.getElementById('search-dropdown');
+    positionDropdown();
+    dd.innerHTML = '';
+
+    tips.slice(0, 8).forEach(tip => {
+        if (!tip.name) return;
+        const item = document.createElement('div');
+        item.className = 'sdrop-item';
+        const icon = document.createElement('span');
+        icon.className = 'sdrop-icon';
+        icon.textContent = '📍';
+        const info = document.createElement('div');
+        const nameEl = document.createElement('div');
+        nameEl.textContent = tip.name;
+        info.appendChild(nameEl);
+        const district = tip.district || '';
+        const addr = typeof tip.address === 'string' ? tip.address : '';
+        const subText = [district, addr].filter(s => s && s !== tip.name).join(' · ');
+        if (subText) {
+            const subEl = document.createElement('div');
+            subEl.className = 'sdrop-sub';
+            subEl.textContent = subText;
+            info.appendChild(subEl);
+        }
+        item.appendChild(icon);
+        item.appendChild(info);
+        item.addEventListener('click', () => {
+            document.getElementById('search-input').value = tip.name;
+            closeDropdown();
+            saveHistory(tip.name);
+            if (tip.location) {
+                const zoom = addr ? 16 : 13;
+                map.setZoomAndCenter(zoom, [tip.location.getLng(), tip.location.getLat()], false, 300);
+                if (_searchMarker) { map.remove(_searchMarker); _searchMarker = null; }
+                _searchMarker = new AMap.Marker({
+                    position: new AMap.LngLat(tip.location.getLng(), tip.location.getLat()),
+                    anchor: 'center',
+                    content: '<div style="width:16px;height:16px;background:#58a6ff;border:3px solid #fff;' +
+                             'border-radius:50%;box-shadow:0 0 0 5px rgba(88,166,255,0.3)"></div>',
+                    zIndex: 200,
+                });
+                map.add(_searchMarker);
+                setTimeout(() => { if (_searchMarker) { map.remove(_searchMarker); _searchMarker = null; } }, 4000);
+            } else {
+                doSearch();
+            }
+        });
+        dd.appendChild(item);
+    });
+    dd.classList.add('open');
+}
+function navigateToGeocode(geo) {
+    const loc = geo.location;
+    const lvl = geo.level || '';
+    let zoom = 15;
+    if      (/国家/.test(lvl))            zoom = 5;
+    else if (/省|自治区/.test(lvl))        zoom = 8;
+    else if (/市/.test(lvl))               zoom = 11;
+    else if (/区|县|镇/.test(lvl))         zoom = 13;
+    else if (/村|路|街道|小区/.test(lvl))  zoom = 16;
+    map.setZoomAndCenter(zoom, [loc.getLng(), loc.getLat()], false, 300);
+    if (_searchMarker) { map.remove(_searchMarker); _searchMarker = null; }
+    _searchMarker = new AMap.Marker({
+        position: new AMap.LngLat(loc.getLng(), loc.getLat()),
+        anchor:   'center',
+        content:  '<div style="width:16px;height:16px;background:#58a6ff;border:3px solid #fff;' +
+                  'border-radius:50%;box-shadow:0 0 0 5px rgba(88,166,255,0.3)"></div>',
+        zIndex:   200,
+    });
+    map.add(_searchMarker);
+    setTimeout(() => { if (_searchMarker) { map.remove(_searchMarker); _searchMarker = null; } }, 4000);
+}
+
+// ── 搜索定位 ────────────────────────────────────────────────────────────────
+function doSearch() {
+    const inp = document.getElementById('search-input');
+    const btn = document.getElementById('search-btn');
+    const q = inp.value.trim();
+    if (!q || !searchGeocoder) return;
+    btn.disabled = true;
+    inp.classList.remove('err');
+    closeDropdown();
+    searchGeocoder.getLocation(q, function (status, result) {
+        btn.disabled = false;
+        if (status === 'complete' && result.geocodes && result.geocodes.length) {
+            if (result.geocodes.length === 1) {
+                navigateToGeocode(result.geocodes[0]);
+                saveHistory(q);
+            } else {
+                showCandidatesDropdown(result.geocodes);
+            }
+        } else {
+            inp.classList.add('err');
+            setTimeout(() => inp.classList.remove('err'), 2000);
+        }
+    });
+}
+document.getElementById('search-btn').addEventListener('click', doSearch);
+document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+document.getElementById('search-input').addEventListener('focus', function () {
+    if (searchHistory.length) showHistoryDropdown(this.value.trim() || null);
+});
+document.getElementById('search-input').addEventListener('input', function () {
+    const q = this.value.trim();
+    clearTimeout(_acTimer);
+    if (!q) { showHistoryDropdown(null); return; }
+    _acTimer = setTimeout(function () {
+        if (!autoComplete) { showHistoryDropdown(q); return; }
+        autoComplete.search(q, function (status, result) {
+            if (status === 'complete' && result.tips && result.tips.length) {
+                showAutocompleteDropdown(result.tips);
+            } else {
+                showHistoryDropdown(q);
+            }
+        });
+    }, 250);
+});
+document.addEventListener('click', function (e) {
+    const wrap = document.getElementById('search-wrap');
+    const dd   = document.getElementById('search-dropdown');
+    if (!wrap.contains(e.target) && !dd.contains(e.target)) closeDropdown();
+});
+
+// ── AI 浮动对话 ────────────────────────────────────────────────────────────────
+function stripMd(t) {
+    return t
+        .replace(/\*\*(.*?)\*\*/gs, '$1')   // **bold**
+        .replace(/\*(.*?)\*/gs, '$1')        // *italic*
+        .replace(/^#+\s*/gm, '')             // ## 标题
+        .replace(/`([^`]*)`/g, '$1');        // `code`
+}
+
+(function () {
+    let chatHistory = [];
+    let chatBusy    = false;
+
+    const fab   = document.getElementById('chat-fab');
+    const panel = document.getElementById('chat-panel');
+    const msgs  = document.getElementById('cp-msgs');
+    const input = document.getElementById('cp-input');
+    const send  = document.getElementById('cp-send');
+
+    fab.addEventListener('click', () => panel.classList.toggle('open'));
+
+    document.getElementById('cp-clear').addEventListener('click', () => {
+        chatHistory = [];
+        msgs.innerHTML = '';
+    });
+
+    function addMsg(role, text, loading) {
+        const div = document.createElement('div');
+        div.className = 'cm ' + role + (loading ? ' loading' : '');
+        div.textContent = text;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return div;
+    }
+
+    function addAnnotatedMsg(text, imgB64) {
+        const div = document.createElement('div');
+        div.className = 'cm ai';
+        if (text) {
+            const p = document.createElement('div');
+            p.textContent = text;
+            div.appendChild(p);
+        }
+        if (imgB64) {
+            const img = document.createElement('img');
+            img.src = 'data:image/png;base64,' + imgB64;
+            img.style.cssText = 'width:100%;border-radius:6px;margin-top:6px;cursor:pointer;';
+            img.title = '点击放大';
+            img.addEventListener('click', () => {
+                const w = window.open();
+                w.document.write(`<img src="${img.src}" style="max-width:100%">`);
+            });
+            div.appendChild(img);
+        }
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return div;
+    }
+
+    async function doChat() {
+        if (chatBusy) return;
+        const text = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+        chatHistory.push({ role: 'user', content: text });
+        addMsg('user', text);
+
+        chatBusy = true;
+        send.disabled = true;
+        input.disabled = true;
+        const loader = addMsg('ai', '正在截图并分析，请稍候…', true);
+
+        const center = map ? map.getCenter() : null;
+        try {
+            const resp = await fetch('/api/chat', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    messages: chatHistory,
+                    lat:    center ? center.getLat()           : 39.9042,
+                    lng:    center ? center.getLng()           : 116.4074,
+                    zoom:   map    ? Math.round(map.getZoom()) : 12,
+                    region:           document.getElementById('info-region').textContent || '',
+                    nearby_pois:      nearbyPois,
+                    active_wl:        _activeWLLayers(),
+                    traverse_context: window._traverseContext || '',
+                }),
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const replyText = stripMd(data.reply || '');
+            if (data.annotated_image) {
+                loader.remove();
+                addAnnotatedMsg(replyText, data.annotated_image);
+            } else {
+                loader.textContent = replyText;
+                loader.classList.remove('loading');
+            }
+            chatHistory.push({ role: 'assistant', content: data.reply || '' });
+        } catch (err) {
+            loader.textContent = '请求失败：' + err.message;
+            loader.classList.remove('loading');
+            chatHistory.pop();
+        } finally {
+            chatBusy = false;
+            send.disabled = false;
+            input.disabled = false;
+            input.focus();
+        }
+    }
+
+    send.addEventListener('click', doChat);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doChat(); }
+    });
+})();
+
+// ── 区域遍历分析 ────────────────────────────────────────────────────────────────
+(function () {
+    let _tvBounds     = null;   // {north,south,east,west}
+    let _tvRect       = null;   // AMap.Polygon overlay on map
+    let _tvMarkers    = [];     // finding markers
+    let _tvSessionId  = null;
+    let _tvEs         = null;   // EventSource
+
+    const drawBtn  = document.getElementById('tv-draw-btn');
+    const clearBtn = document.getElementById('tv-clear-btn');
+    const zoomSel  = document.getElementById('tv-zoom');
+    const wlFilter = document.getElementById('tv-wl-filter');
+    const wlHint   = document.getElementById('tv-wl-hint');
+    const tileEst  = document.getElementById('tv-tile-est');
+    const promptEl = document.getElementById('tv-prompt');
+    const startBtn = document.getElementById('tv-start-btn');
+    const stopBtn  = document.getElementById('tv-stop-btn');
+    const progBar  = document.getElementById('tv-progress-bar');
+    const progFill = document.getElementById('tv-progress-fill');
+    const progTxt  = document.getElementById('tv-progress-txt');
+    const boundsEl = document.getElementById('tv-bounds-info');
+    const reopenBtn= document.getElementById('tv-reopen-btn');
+
+    let _lastSummaryData = null;  // 保存最后一次报告供重开
+
+    // ── 框选工具 ──────────────────────────────────────────────────────────────
+    let _tvOnDraw = null;  // 当前绑定的 draw 监听器引用
+
+    function startDraw() {
+        if (!mouseTool) { alert('地图尚未就绪，请稍候'); return; }
+
+        // 清除上次未完成的监听
+        if (_tvOnDraw) { mouseTool.off('draw', _tvOnDraw); _tvOnDraw = null; }
+
+        drawBtn.classList.add('active');
+        drawBtn.textContent = '在地图上拖动画框…';
+        mouseTool.close(false);
+
+        try {
+            mouseTool.rectangle({
+                strokeColor:   '#f0c040',
+                strokeWeight:  2,
+                strokeOpacity: 0.9,
+                strokeStyle:   'dashed',
+                fillColor:     '#f0c040',
+                fillOpacity:   0.06,
+                zIndex:        80,
+            });
+        } catch (err) {
+            alert('画框工具启动失败：' + err.message);
+            drawBtn.classList.remove('active');
+            drawBtn.textContent = '✏️ 框选区域';
+            return;
+        }
+
+        _tvOnDraw = function (e) {
+            mouseTool.off('draw', _tvOnDraw);
+            _tvOnDraw = null;
+            drawBtn.classList.remove('active');
+            drawBtn.textContent = '✏️ 重新框选';
+            mouseTool.close(false);
+
+            try {
+                const b = e.obj.getBounds();
+                _tvBounds = {
+                    north: b.getNorthEast().getLat(),
+                    south: b.getSouthWest().getLat(),
+                    east:  b.getNorthEast().getLng(),
+                    west:  b.getSouthWest().getLng(),
+                };
+                map.remove(e.obj);
+                _drawBoundsRect();
+                _refreshBoundsUI();
+            } catch (err) {
+                appendLog('获取框选范围失败，请重试：' + err.message, 'err');
+            }
+        };
+        mouseTool.on('draw', _tvOnDraw);
+    }
+
+    function _drawBoundsRect() {
+        if (_tvRect) map.remove(_tvRect);
+        if (!_tvBounds) { _tvRect = null; return; }
+        const { north, south, east, west } = _tvBounds;
+        _tvRect = new AMap.Polygon({
+            path: [[west, north], [east, north], [east, south], [west, south]],
+            strokeColor:   '#f0c040',
+            strokeWeight:  2,
+            strokeOpacity: 0.9,
+            strokeStyle:   'dashed',
+            fillColor:     '#f0c040',
+            fillOpacity:   0.06,
+            zIndex:        80,
+        });
+        map.add(_tvRect);
+    }
+
+    function _refreshBoundsUI() {
+        if (!_tvBounds) {
+            boundsEl.classList.remove('show');
+            tileEst.textContent = '—格';
+            return;
+        }
+        const b = _tvBounds;
+        document.getElementById('tv-n').textContent = b.north.toFixed(5) + '°';
+        document.getElementById('tv-s').textContent = b.south.toFixed(5) + '°';
+        document.getElementById('tv-e').textContent = b.east.toFixed(5) + '°';
+        document.getElementById('tv-w').textContent = b.west.toFixed(5) + '°';
+        boundsEl.classList.add('show');
+        _updateTileEst();
+    }
+
+    async function _updateTileEst() {
+        let b = _tvBounds;
+        const wlVal = wlFilter.value;
+        if (!b && !wlVal) { tileEst.textContent = '—格'; return; }
+        if (!b && wlVal) {
+            try {
+                const r = await fetch(`/api/water-level/${wlVal}/bbox`);
+                if (!r.ok) { tileEst.textContent = '—格'; return; }
+                b = await r.json();
+            } catch { tileEst.textContent = '—格'; return; }
+        }
+        try {
+            const resp = await fetch('/api/traverse/estimate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...b, zoom: parseInt(zoomSel.value), prompt: '' }),
+            });
+            const { tiles } = await resp.json();
+            tileEst.textContent = tiles + ' 格';
+        } catch { tileEst.textContent = '?格'; }
+    }
+
+    function clearTraverse() {
+        _tvBounds = null;
+        if (_tvRect) { map.remove(_tvRect); _tvRect = null; }
+        _tvMarkers.forEach(m => map.remove(m));
+        _tvMarkers = [];
+        _refreshBoundsUI();
+        boundsEl.classList.remove('show');
+        drawBtn.textContent = '✏️ 框选区域';
+        drawBtn.classList.remove('active');
+        progBar.style.display = 'none';
+        progTxt.style.display = 'none';
+        progFill.style.width  = '0%';
+        startBtn.style.display = '';
+        stopBtn.style.display  = 'none';
+        if (_tvOnDraw) { mouseTool && mouseTool.off('draw', _tvOnDraw); _tvOnDraw = null; }
+        if (_tvEs) { _tvEs.close(); _tvEs = null; }
+    }
+
+    // ── 开始遍历 ──────────────────────────────────────────────────────────────
+    async function startTraverse() {
+        const wlVal  = wlFilter.value;
+        let bounds   = _tvBounds;
+
+        if (!bounds && !wlVal) {
+            alert('请先框选区域，或选择水位线过滤范围（二选一即可）');
+            return;
+        }
+        const prompt = promptEl.value.trim();
+        if (!prompt) { alert('请输入识别目标，例如：违规建筑、临时搭建物'); return; }
+
+        // 仅选了水位线但没框选 → 用水位线多边形 bbox 作遍历范围
+        if (!bounds && wlVal) {
+            try {
+                const r = await fetch(`/api/water-level/${wlVal}/bbox`);
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                bounds = await r.json();
+            } catch (e) {
+                alert('获取水位线范围失败：' + e.message);
+                return;
+            }
+        }
+
+        // 清除上次标记
+        _tvMarkers.forEach(m => map.remove(m));
+        _tvMarkers = [];
+
+        startBtn.style.display = 'none';
+        stopBtn.style.display  = '';
+        progBar.style.display  = '';
+        progTxt.style.display  = '';
+        progFill.style.width   = '0%';
+        progTxt.textContent    = '准备中…';
+
+        try {
+            const resp = await fetch('/api/traverse', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...bounds,
+                    zoom:      parseInt(zoomSel.value),
+                    prompt,
+                    active_wl: _activeWLLayers(),
+                    wl_filter: wlFilter.value,
+                }),
+            });
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({}));
+                throw new Error(`服务端错误 ${resp.status}：${err.detail || '请重启服务端'}`);
+            }
+            const { session_id } = await resp.json();
+            if (!session_id) throw new Error('服务端未返回 session_id，请重启服务端');
+            _tvSessionId = session_id;
+
+            if (_tvEs) _tvEs.close();
+            _tvEs = new EventSource(`/api/stream/${session_id}`);
+            _tvEs.onmessage = handleTraverseEvent;
+            _tvEs.onerror   = () => {
+                appendLog('遍历连接中断', 'err');
+                _traverseDone();
+            };
+        } catch (e) {
+            appendLog('遍历启动失败：' + e.message, 'err');
+            _traverseDone();
+        }
+    }
+
+    async function stopTraverse() {
+        if (_tvSessionId) {
+            try {
+                await fetch(`/api/traverse/${_tvSessionId}/stop`, { method: 'POST' });
+            } catch {}
+        }
+        if (_tvEs) { _tvEs.close(); _tvEs = null; }
+        _traverseDone();
+    }
+
+    function _traverseDone() {
+        startBtn.style.display = '';
+        stopBtn.style.display  = 'none';
+    }
+
+    // ── SSE 事件处理 ───────────────────────────────────────────────────────────
+    function handleTraverseEvent(e) {
+        const data = JSON.parse(e.data);
+        switch (data.type) {
+
+            case 'traverse_start':
+                progTxt.textContent = `0 / ${data.total} 格`;
+                appendLog(`开始遍历，共 ${data.total} 个格子`, 'action');
+                break;
+
+            case 'traverse_progress': {
+                const pct = (data.current / data.total * 100).toFixed(0);
+                progFill.style.width = pct + '%';
+                progTxt.textContent  = `${data.current} / ${data.total} 格`;
+                break;
+            }
+
+            case 'traverse_finding':
+                try {
+                    _addFindingMarker(data);
+                } catch(err) {
+                    appendLog('标记异常：' + err.message, 'err');
+                }
+                break;
+
+            case 'traverse_summary':
+                _tvEs.close(); _tvEs = null;
+                _traverseDone();
+                // 保存供重开，不自动弹窗
+                _lastSummaryData = data;
+                window._traverseContext = data.summary || '';
+                reopenBtn.style.display = '';
+                progTxt.textContent = `完成：${(data.findings||[]).length} 处目标，共 ${data.total_tiles} 格`;
+                appendLog(`✓ 遍历完成，发现 ${(data.findings||[]).length} 处目标`, 'done');
+                break;
+
+            case 'screenshot':
+                handleEvent(e);   // 复用现有截图预览逻辑
+                break;
+
+            case 'log':
+                appendLog(data.message);
+                break;
+
+            case 'error':
+                appendLog('遍历错误：' + data.message, 'err');
+                _traverseDone();
+                if (_tvEs) { _tvEs.close(); _tvEs = null; }
+                break;
+
+            case 'done':
+                if (_tvEs) { _tvEs.close(); _tvEs = null; }
+                _traverseDone();
+                break;
+        }
+    }
+
+    // ── 在地图上打标记 ─────────────────────────────────────────────────────────
+    function _findingLngLat(f) {
+        const b   = f.bounds;
+        const box = f.box_2d;
+        if (box && box.length === 4) {
+            const cx  = (box[0] + box[2]) / 2 / 1000;
+            const cy  = (box[1] + box[3]) / 2 / 1000;
+            const lng = b.west  + (b.east  - b.west)  * cx;
+            const lat = b.north - (b.north - b.south) * cy;
+            return [lng, lat];
+        }
+        return [(b.west + b.east) / 2, (b.north + b.south) / 2];
+    }
+
+    function _addFindingMarker(f) {
+        if (!f.bounds) return;
+        const [lng, lat] = _findingLngLat(f);
+        const conf = ((f.confidence || 0.8) * 100).toFixed(0);
+        const label = f.finding_type || f.type || '目标';
+        const marker = new AMap.Marker({
+            position: new AMap.LngLat(lng, lat),
+            anchor:   'center',
+            content:  '<div style="width:12px;height:12px;background:#f0c040;border:2px solid #fff;' +
+                      'border-radius:50%;box-shadow:0 0 6px rgba(240,192,64,0.7)"></div>',
+            title:    f.description || label,
+            zIndex:   110,
+        });
+        marker.setLabel({
+            content:   `<div class="marker-popup" style="background:rgba(180,140,0,0.92)">${label} ${conf}%</div>`,
+            direction: 'right',
+            offset:    new AMap.Pixel(4, 0),
+        });
+        map.add(marker);
+        _tvMarkers.push(marker);
+    }
+
+    // ── 汇总报告弹窗 ──────────────────────────────────────────────────────────
+    function _showSummary(data) {
+        _lastSummaryData = data;
+
+        // 存全局供 AI 对话引用
+        window._traverseContext = data.summary || '';
+
+        reopenBtn.style.display = '';
+        _renderSummary(data);
+    }
+
+    function _renderSummary(data) {
+        const modal     = document.getElementById('tv-modal');
+        const summaryEl = document.getElementById('tv-modal-summary');
+        const findingsEl= document.getElementById('tv-modal-findings');
+        const box       = document.getElementById('tv-modal-box');
+
+        // 每次打开时重置位置到居中
+        box.style.position = '';
+        box.style.left     = '';
+        box.style.top      = '';
+        modal.style.alignItems    = '';
+        modal.style.justifyContent= '';
+
+        summaryEl.textContent = data.summary || '';
+
+        findingsEl.innerHTML = '';
+        if (data.findings && data.findings.length) {
+            const hdr = document.createElement('div');
+            hdr.style.cssText = 'font-size:11px;color:#8b949e;margin-bottom:8px;border-top:1px solid #30363d;padding-top:8px;';
+            hdr.textContent   = `发现列表（${data.findings.length} 条，点击定位）`;
+            findingsEl.appendChild(hdr);
+
+            data.findings.forEach(f => {
+                const item = document.createElement('div');
+                item.className = 'tv-finding-item';
+                item.innerHTML =
+                    `<span class="tv-finding-icon">📍</span>` +
+                    `<div class="tv-finding-info">` +
+                    `  <div class="tv-finding-type">${escHtml(f.type || '未知')}</div>` +
+                    `  <div class="tv-finding-desc">${escHtml(f.description || '')}</div>` +
+                    `  <div class="tv-finding-loc">位置：${escHtml(f.location || '')} · 格子 ${f.tile || '?'}</div>` +
+                    `</div>`;
+                item.addEventListener('click', () => {
+                    if (f.bounds) {
+                        const [lng, lat] = _findingLngLat(f);
+                        map.setZoomAndCenter(parseInt(zoomSel.value), [lng, lat], false, 300);
+                    }
+                });
+                findingsEl.appendChild(item);
+            });
+        }
+
+        modal.classList.add('open');
+    }
+
+    // ── 事件绑定 ───────────────────────────────────────────────────────────────
+    drawBtn .addEventListener('click', startDraw);
+    clearBtn.addEventListener('click', clearTraverse);
+    startBtn.addEventListener('click', startTraverse);
+    stopBtn .addEventListener('click', stopTraverse);
+    zoomSel .addEventListener('change', _updateTileEst);
+    wlFilter.addEventListener('change', () => {
+        wlHint.style.display = wlFilter.value ? '' : 'none';
+        _updateTileEst();
+    });
+
+    reopenBtn.addEventListener('click', () => {
+        if (_lastSummaryData) _renderSummary(_lastSummaryData);
+    });
+
+    document.getElementById('tv-modal-close').addEventListener('click', () => {
+        document.getElementById('tv-modal').classList.remove('open');
+    });
+    document.getElementById('tv-modal').addEventListener('click', function (e) {
+        if (e.target === this) this.classList.remove('open');
+    });
+
+    // ── 弹窗拖动 ───────────────────────────────────────────────────────────────
+    (function () {
+        const modal = document.getElementById('tv-modal');
+        const box   = document.getElementById('tv-modal-box');
+        const hdr   = document.getElementById('tv-modal-hdr');
+        let dragging = false, ox = 0, oy = 0;
+
+        hdr.addEventListener('mousedown', (e) => {
+            if (e.target.id === 'tv-modal-close') return;
+            dragging = true;
+            const r = box.getBoundingClientRect();
+            // 切换为绝对定位
+            box.style.position = 'fixed';
+            box.style.left = r.left + 'px';
+            box.style.top  = r.top  + 'px';
+            box.style.margin = '0';
+            modal.style.alignItems     = 'flex-start';
+            modal.style.justifyContent = 'flex-start';
+            ox = e.clientX - r.left;
+            oy = e.clientY - r.top;
+            e.preventDefault();
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            box.style.left = (e.clientX - ox) + 'px';
+            box.style.top  = (e.clientY - oy) + 'px';
+        });
+        document.addEventListener('mouseup', () => { dragging = false; });
+    })();
+})();
+
+// ── 专业模式面板 ─────────────────────────────────────────────────────────────
+(function () {
+    let _ppAreaMode  = 'viewport';
+    let _ppOverlays  = [];
+    let _ppDrawShape = null;
+    let _ppBounds    = null;
+    let _ppEs        = null;
+    let _ppOnDraw    = null;
+
+    const TYPE_COLOR = {
+        building: '#f0883e',
+        road:     '#58a6ff',
+        dam:      '#3fb950',
+        custom:   '#da3633',
+    };
+
+    function _init() {
+        document.querySelectorAll('.pp-tab').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.pp-tab').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                _ppAreaMode = this.dataset.area;
+                _updateAreaUI();
+            });
+        });
+
+        document.querySelectorAll('.pp-type-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.pp-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const wrap = document.getElementById('pp-custom-wrap');
+                wrap.classList.toggle('show', this.dataset.type === 'custom');
+            });
+        });
+
+        document.getElementById('pp-clear-draw').addEventListener('click', _clearDraw);
+        document.getElementById('pp-start-btn').addEventListener('click', _startExtract);
+        document.getElementById('pp-clear-btn').addEventListener('click', _clearAll);
+    }
+
+    function _updateAreaUI() {
+        const hint     = document.getElementById('pp-draw-hint');
+        const boundsEl = document.getElementById('pp-bounds-info');
+        if (_ppAreaMode === 'viewport') {
+            hint.style.display = 'none';
+            boundsEl.classList.remove('show');
+        } else {
+            hint.style.display  = '';
+            hint.textContent    = _ppAreaMode === 'rect'
+                ? '在地图上拖拽框选目标区域'
+                : '在地图上点击绘制多边形（双击结束）';
+            if (_ppBounds) boundsEl.classList.add('show');
+            _startDraw();
+        }
+    }
+
+    function _startDraw() {
+        if (!mouseTool) { setTimeout(_startDraw, 800); return; }
+        if (_ppOnDraw) { mouseTool.off('draw', _ppOnDraw); _ppOnDraw = null; }
+        mouseTool.close(false);
+
+        const opts = {
+            strokeColor: '#f0883e', strokeWeight: 2, strokeStyle: 'dashed',
+            fillColor:   '#f0883e', fillOpacity:  0.06, zIndex: 90,
+        };
+        if (_ppAreaMode === 'rect') {
+            mouseTool.rectangle(opts);
+        } else {
+            mouseTool.polygon(opts);
+        }
+
+        _ppOnDraw = function (e) {
+            mouseTool.off('draw', _ppOnDraw); _ppOnDraw = null;
+            mouseTool.close(false);
+            try {
+                const b = e.obj.getBounds();
+                _ppBounds = {
+                    north: b.getNorthEast().getLat(), south: b.getSouthWest().getLat(),
+                    east:  b.getNorthEast().getLng(), west:  b.getSouthWest().getLng(),
+                };
+                if (_ppDrawShape) map.remove(_ppDrawShape);
+                _ppDrawShape = e.obj;
+                document.getElementById('pp-bounds-text').textContent =
+                    `N${_ppBounds.north.toFixed(4)} S${_ppBounds.south.toFixed(4)} ` +
+                    `E${_ppBounds.east.toFixed(4)} W${_ppBounds.west.toFixed(4)}`;
+                document.getElementById('pp-bounds-info').classList.add('show');
+                document.getElementById('pp-draw-hint').style.display = 'none';
+            } catch (err) {
+                _ppLog('绘制区域获取失败：' + err.message, 'err');
+            }
+        };
+        mouseTool.on('draw', _ppOnDraw);
+    }
+
+    function _clearDraw() {
+        _ppBounds = null;
+        if (_ppDrawShape) { map && map.remove(_ppDrawShape); _ppDrawShape = null; }
+        if (_ppOnDraw) { mouseTool && mouseTool.off('draw', _ppOnDraw); _ppOnDraw = null; }
+        document.getElementById('pp-bounds-info').classList.remove('show');
+        if (_ppAreaMode !== 'viewport') {
+            const hint = document.getElementById('pp-draw-hint');
+            hint.style.display = '';
+            hint.textContent   = _ppAreaMode === 'rect'
+                ? '在地图上拖拽框选目标区域'
+                : '在地图上点击绘制多边形（双击结束）';
+            _startDraw();
+        }
+    }
+
+    async function _startExtract() {
+        if (!map) { _ppStatus('地图未就绪', true); return; }
+
+        const activeTypeBtn = document.querySelector('.pp-type-btn.active');
+        const appType       = activeTypeBtn ? activeTypeBtn.dataset.type : 'building';
+        const textPrompt    = appType === 'custom'
+            ? document.getElementById('pp-custom-input').value.trim()
+            : '';
+        if (appType === 'custom' && !textPrompt) {
+            _ppStatus('请输入自定义目标描述', true); return;
+        }
+        if (_ppAreaMode !== 'viewport' && !_ppBounds) {
+            _ppStatus('请先在地图上框选或绘制范围', true); return;
+        }
+
+        document.getElementById('pp-start-btn').disabled = true;
+        document.getElementById('pp-result').classList.remove('show');
+        document.getElementById('pp-log').innerHTML = '';
+        _ppStatus('⏳ 提交任务…');
+
+        const center = map.getCenter();
+        const body   = {
+            app_type:    appType,
+            bounds_mode: _ppAreaMode === 'viewport' ? 'viewport' : 'custom',
+            lat:  center.getLat(), lng: center.getLng(),
+            zoom: Math.round(map.getZoom()),
+            text_prompt: textPrompt,
+            active_wl:   _activeWLLayers(),
+        };
+        if (_ppAreaMode !== 'viewport' && _ppBounds) Object.assign(body, _ppBounds);
+
+        try {
+            const resp = await fetch('/api/aiearth/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify(body),
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const { session_id } = await resp.json();
+
+            if (_ppEs) _ppEs.close();
+            _ppEs = new EventSource(`/api/stream/${session_id}`);
+            _ppEs.onmessage = _handlePPEvent;
+            _ppEs.onerror   = () => { _ppLog('连接中断', 'err'); _ppDone(); };
+        } catch (err) {
+            _ppLog('启动失败：' + err.message, 'err');
+            _ppStatus('启动失败', true);
+            _ppDone();
+        }
+    }
+
+    function _handlePPEvent(e) {
+        const data = JSON.parse(e.data);
+        switch (data.type) {
+            case 'log':
+                _ppLog(data.message);
+                _ppStatus(data.message);
+                break;
+            case 'aie_result':
+                _renderFeatures(data.features, data.app_type || 'building');
+                _ppResult(`识别完成，共发现 ${data.count} 个${_typeName(data.app_type)} 要素`);
+                _ppStatus('✅ 提取完成');
+                break;
+            case 'error':
+                _ppLog('错误：' + data.message, 'err');
+                _ppStatus('❌ ' + data.message, true);
+                _ppDone();
+                if (_ppEs) { _ppEs.close(); _ppEs = null; }
+                break;
+            case 'done':
+                _ppDone();
+                if (_ppEs) { _ppEs.close(); _ppEs = null; }
+                break;
+        }
+    }
+
+    function _renderFeatures(features, appType) {
+        const color = TYPE_COLOR[appType] || '#58a6ff';
+        features.forEach(f => {
+            if (!f.geometry) return;
+            const coords = f.geometry.type === 'Polygon'
+                ? f.geometry.coordinates
+                : f.geometry.type === 'MultiPolygon'
+                    ? f.geometry.coordinates.flat(1)
+                    : null;
+            if (!coords) return;
+            coords.forEach(ring => {
+                const poly = new AMap.Polygon({
+                    path:          ring.map(([lng, lat]) => [lng, lat]),
+                    strokeColor:   color, strokeWeight: 2, strokeOpacity: 0.9,
+                    fillColor:     color, fillOpacity:  0.15, zIndex: 50,
+                });
+                map.add(poly);
+                _ppOverlays.push(poly);
+            });
+        });
+    }
+
+    function _typeName(t) {
+        return { building: '建筑物', road: '路网', dam: '拦河坝', custom: '目标' }[t] || t;
+    }
+
+    function _clearAll() {
+        _ppOverlays.forEach(p => map && map.remove(p));
+        _ppOverlays = [];
+        document.getElementById('pp-log').innerHTML = '';
+        document.getElementById('pp-result').classList.remove('show');
+        document.getElementById('pp-status').textContent = '';
+        if (_ppEs) { _ppEs.close(); _ppEs = null; }
+        _ppDone();
+    }
+
+    function _ppLog(msg, cls) {
+        const log = document.getElementById('pp-log');
+        const row = document.createElement('div');
+        row.className = 'pp-log-row';
+        const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        row.innerHTML =
+            `<span class="pp-log-time">${time}</span>` +
+            `<span class="pp-log-msg ${cls || ''}">${escHtml(msg)}</span>`;
+        log.appendChild(row);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function _ppStatus(msg, isErr) {
+        const el = document.getElementById('pp-status');
+        el.textContent = msg;
+        el.style.color = isErr ? '#f85149' : '#f0883e';
+    }
+
+    function _ppResult(msg) {
+        document.getElementById('pp-result-text').textContent = msg;
+        document.getElementById('pp-result').classList.add('show');
+    }
+
+    function _ppDone() {
+        document.getElementById('pp-start-btn').disabled = false;
+    }
+
+    if (document.readyState === 'complete') {
+        _init();
+    } else {
+        window.addEventListener('load', _init);
+    }
+})();
+</script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=__AMAP_KEY__&callback=_onAMapReady"></script>
+</body>
+</html>

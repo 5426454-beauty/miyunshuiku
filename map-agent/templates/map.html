@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1024px; height: 768px; overflow: hidden; background: #000; }
+#map-container { width: 1024px; height: 768px; }
+</style>
+</head>
+<body>
+<div id="map-container"></div>
+<script>
+/* __AMAP_SECURITY__ */
+window.mapReady     = false;
+window.amapInstance = null;
+window._tilesLoaded = false;  // 每次移动后由瓦片加载事件置 true
+
+const _p    = new URLSearchParams(location.search);
+const _lat  = parseFloat(_p.get('lat')  || '39.9042');
+const _lng  = parseFloat(_p.get('lng')  || '116.4074');
+const _zoom = parseInt(_p.get('zoom')   || '12', 10);
+
+function _onAMapReady() {
+    const satLayer = new AMap.TileLayer.Satellite();
+    const map = new AMap.Map('map-container', {
+        center:        [_lng, _lat],
+        zoom:          _zoom,
+        layers:        [satLayer],
+        animateEnable: false,
+        jogEnable:     false,
+        resizeEnable:  false,
+        showLabel:     false
+    });
+    window.amapInstance = map;
+
+    // 每次平移/缩放开始时重置标志
+    map.on('movestart', function () { window._tilesLoaded = false; });
+    map.on('zoomstart', function () { window._tilesLoaded = false; });
+
+    // 瓦片全部加载完成后置 true
+    satLayer.on('complete', function () { window._tilesLoaded = true; });
+
+    // 首次加载：complete 事件后 600ms 置 ready
+    map.on('complete', function () {
+        setTimeout(function () {
+            window._tilesLoaded = true;
+            window.mapReady = true;
+        }, 600);
+    });
+}
+</script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=__AMAP_KEY__&callback=_onAMapReady"></script>
+</body>
+</html>

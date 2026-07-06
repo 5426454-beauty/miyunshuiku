@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "PowerShell(node server.js)",
+      "PowerShell(npx vite --host 0.0.0.0)",
+      "PowerShell(node C:\\\\jiangli\\\\miyunshuikuluyanban\\\\server.js)",
+      "PowerShell(pip *)",
+      "WebSearch",
+      "WebFetch(domain:help.aliyun.com)"
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+INFO:     Started server process [984]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:10741 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10741 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:10741 - "GET /api/water-level/155 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10742 - "GET /api/water-level/156 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10751 - "GET /api/water-level/157 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10741 - "GET /api/water-level/157d5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10742 - "GET /api/water-level/158d5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10751 - "GET /api/water-level/160 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10786 - "POST /api/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10786 - "GET /api/stream/2be747da-aa34-4508-b067-8ae09bb1bfb7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10821 - "GET /map.html?lat=40.564149&lng=116.958552&zoom=17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10821 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:10951 - "GET /map.html?lat=40.56433&lng=116.959674&zoom=17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:10951 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:10934 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11184 - "POST /api/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11184 - "GET /api/stream/be7ba212-ccf3-4832-99b8-391cd22938c4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11199 - "GET /map.html?lat=40.572735&lng=116.952445&zoom=17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11199 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:11245 - "GET /map.html?lat=40.564981&lng=116.959393&zoom=17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11245 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:11233 - "POST /api/chat HTTP/1.1" 200 OK

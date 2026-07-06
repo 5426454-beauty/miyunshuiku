@@ -1,0 +1,23 @@
+[Admin API] 运行在 http://localhost:3001
+  - POST /api/chat       AI 对话 (支持文本+地图视觉)
+  - POST /api/detect     卫星图目标检测
+  - GET  /api/dem/annotations  DEM 标注
+[Chat] 工具调用轮次 1
+[Chat] 执行工具: analyze_dem({"query_type":"areas_below","threshold":150})
+[DEM Tool] 执行: py "D:\miyunshuiku\query_elevation.py" --annotate-areas-below 150 30
+[DEM] 自动标注 v1: 发现 5 个低于 150.0m 的连通低洼区域：白河主坝  2294.44 km²；潮河入库口  0.16 km²；白河主坝·1号  6.03 km²；潮河主坝  0.1 km²；潮河入库口·1号  0.22 km²
+[Chat] 工具调用轮次 1
+[Chat] 执行工具: analyze_dem({"query_type":"areas_below","threshold":153})
+[DEM Tool] 执行: py "D:\miyunshuiku\query_elevation.py" --annotate-areas-below 153 30
+[DEM] 自动标注 v2: 发现 6 个低于 153.0m 的连通低洼区域：白河主坝  2388.25 km²；潮河入库口  0.16 km²；白河主坝·1号  6.9 km²；潮河主坝  0.21 km²；潮河主坝·1号  0.16 km²；潮河入库口·1号  0.23 km²
+[Flood API] 数据已加载: 115520 格点, 96 步
+[Flood] step 63 max=0.353
+[Flood] step 64 max=0.365
+[Flood] step 65 max=0.363
+[Flood] step 66 max=0.358
+[Flood] step 67 max=0.352
+[Chat] 工具调用轮次 1
+[Chat] 执行工具: analyze_dem({"query_type":"areas_below","threshold":145})
+[DEM Tool] 执行: py "D:\miyunshuiku\query_elevation.py" --annotate-areas-below 145 30
+[DEM] 自动标注 v3: 发现 11 个低于 145.0m 的连通低洼区域：白河主坝  2009.18 km²；潮河主坝  15.37 km²；潮河入库口  0.13 km²；白河主坝·1号  3.91 km²；潮河入库口·1号  64.6 km²；白河主坝·2号  0.15 km²；走马庄副坝  9.81 km²；白河入库口  0.48 km²；库区中心  2.26 km²；库区中心·1号  0.13 km²；库区中心·2号  0.17 km²
+[DEM] 标注已清除

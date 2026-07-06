@@ -1,0 +1,83 @@
+INFO:     127.0.0.1:39772 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39772 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39797 - "GET /map.html?lat=40.562071&lng=116.97029&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39820 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39773 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:39845 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40519 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40519 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40550 - "GET /map.html?lat=40.562247&lng=116.970327&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40550 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40520 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:42089 - "GET /map.html?lat=40.562247&lng=116.97031&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42089 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:42074 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:42784 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42784 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:42826 - "GET /map.html?lat=40.56248&lng=116.969999&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42826 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:42785 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:42892 - "GET /map.html?lat=40.56248&lng=116.969999&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42892 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:42876 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:44050 - "POST /api/traverse/estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44051 - "POST /api/traverse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44051 - "GET /api/stream/c620c607-b5dc-4324-9dc7-39fe518741c8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44076 - "GET /map.html?lat=40.558586&lng=116.974137&zoom=17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44076 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45133 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45133 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45175 - "GET /map.html?lat=40.51147&lng=116.959129&zoom=16 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45175 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45134 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:46315 - "GET /map.html?lat=40.51147&lng=116.959129&zoom=16 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46315 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46298 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:46814 - "GET /map.html?lat=40.51147&lng=116.959129&zoom=16 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46814 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46796 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:47203 - "GET /map.html?lat=40.565997&lng=116.98185&zoom=19 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47203 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:47189 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:49594 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49594 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49594 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49644 - "GET /map.html?lat=40.562484&lng=116.970324&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49644 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49626 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:49997 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49997 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49997 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50031 - "GET /map.html?lat=40.562154&lng=116.970253&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50052 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49998 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:50319 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50319 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50319 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50357 - "GET /map.html?lat=40.565881&lng=116.98179&zoom=19 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50357 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50320 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:50696 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50696 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50696 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50737 - "GET /map.html?lat=40.562582&lng=116.97086&zoom=18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50737 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50721 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:51102 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51102 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51102 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51185 - "GET /map.html?lat=40.565846&lng=116.981953&zoom=19 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51185 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51164 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:52873 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52873 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52873 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52873 - "GET /api/water-level/155 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52874 - "GET /api/water-level/156 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52875 - "GET /api/water-level/157 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52873 - "GET /api/water-level/157d5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52874 - "GET /api/water-level/158d5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52875 - "GET /api/water-level/160 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52913 - "GET /map.html?lat=40.562997&lng=116.935943&zoom=17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52913 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52883 - "POST /api/aiearth/extract HTTP/1.1" 500 Internal Server Error
