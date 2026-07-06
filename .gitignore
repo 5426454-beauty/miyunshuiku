@@ -5,4 +5,7 @@ dist/
 淹没水深计算系统V2.0/
 data/flood/
 dem_annotations.json
+__pycache__/
+*.pyc
+*.log
 .DS_Store
